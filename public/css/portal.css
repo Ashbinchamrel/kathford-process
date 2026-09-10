@@ -1,0 +1,15 @@
+:root{--portal-brand:#009b90;--portal-ink:#183450;--portal-border:#d9e1e8;--portal-muted:#66758a;--portal-radius:10px}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#243246}
+main :where(input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=file]),select,textarea){border:1px solid var(--portal-border);border-radius:8px;font-size:13px;line-height:1.5;padding:8px 12px;max-width:100%}
+main :where(input,select,textarea):focus-visible{outline:2px solid #a4dfd9;outline-offset:1px}
+main :where(button[type=submit],button:not([type])){font-family:inherit;font-size:13px;font-weight:600;border-radius:8px;min-height:38px}
+main :where(.btn-primary,.btn-secondary,.btn-danger,.btn-quiet){font-size:13px;min-height:40px;border-radius:8px}
+main .btn-primary{background:var(--portal-brand);border-color:var(--portal-brand);color:white}
+main .btn-primary:hover{background:#007f76}
+main .kcard{border-color:var(--portal-border);border-radius:var(--portal-radius);box-shadow:0 1px 3px #18345008}
+main :where(table){font-size:13px}
+main :where(th){font-size:11px;letter-spacing:.025em}
+main :where(input[type=checkbox],input[type=radio]){accent-color:var(--portal-brand)}
+main :where(button,a,input,select,textarea):focus-visible{outline:2px solid #43aaa1;outline-offset:2px}
+main button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:640px){main{padding:16px!important}main :where(h1,h2){overflow-wrap:anywhere}}

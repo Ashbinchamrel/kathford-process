@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Kathford Vendor Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800">
+    <header class="border-b border-slate-200 bg-white">
+        <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+            <a href="{{ route('vendor.portal.dashboard') }}" class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 font-bold text-white">K</div><div><p class="font-bold text-slate-900">Kathford Vendor Portal</p><p class="text-sm text-slate-500">{{ $vendor->name }}</p></div></a>
+            <div class="flex items-center gap-4 text-sm"><a href="{{ route('vendor.portal.password.edit') }}" class="font-medium text-teal-700 hover:text-teal-800">Change password</a><form method="POST" action="{{ route('vendor.portal.logout') }}">@csrf<button class="font-medium text-slate-500 hover:text-slate-800">Sign out</button></form></div>
+        </div>
+    </header>
+    <main class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+        <a href="{{ route('vendor.portal.dashboard') }}" class="text-sm font-semibold text-teal-700 hover:text-teal-800">← Back to dashboard</a>
+        <div class="mt-5 mb-6"><h1 class="text-2xl font-bold text-slate-900">Manage company information</h1><p class="mt-1 text-sm text-slate-500">Keep your contact, business and bank details current for procurement and payment processing.</p></div>
+        @if(session('success'))<div class="mb-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">{{ session('success') }}</div>@endif
+        @if($errors->any())<div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"><ul class="list-inside list-disc">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
+        <form method="POST" action="{{ route('vendor.portal.profile.update') }}" class="space-y-6">@csrf @method('PUT')
+            <section class="rounded-xl border border-slate-200 bg-white p-5"><div class="mb-5 flex items-start justify-between gap-4"><div><h2 class="font-bold text-slate-900">Company profile</h2><p class="mt-1 text-sm text-slate-500">The approved login email is displayed for reference and can only be changed by Kathford administration.</p></div><span class="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800">Active</span></div>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="block text-sm font-medium text-slate-700 sm:col-span-2">Business name <span class="text-red-600">*</span><input name="name" value="{{ old('name', $vendor->name) }}" required class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"></label>
+                    <label class="block text-sm font-medium text-slate-700">Category<select name="category" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"><option value="">Select category</option>@foreach(\App\Models\Vendor::categories() as $category)<option value="{{ $category }}" @selected(old('category', $vendor->category) === $category)>{{ $category }}</option>@endforeach</select></label>
+                    <label class="block text-sm font-medium text-slate-700">Company type<select name="company_type" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"><option value="">Select company type</option>@foreach(\App\Models\Vendor::companyTypes() as $type)<option value="{{ $type }}" @selected(old('company_type', $vendor->company_type) === $type)>{{ $type }}</option>@endforeach</select></label>
+                    <label class="block text-sm font-medium text-slate-700">PAN / VAT<input name="pan_vat_number" value="{{ old('pan_vat_number', $vendor->pan_vat_number) }}" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"></label>
+                    <label class="block text-sm font-medium text-slate-700">Owner<input name="owner_name" value="{{ old('owner_name', $vendor->owner_name) }}" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"></label>
+                    <label class="block text-sm font-medium text-slate-700">Contact person<input name="contact_person" value="{{ old('contact_person', $vendor->contact_person) }}" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"></label>
+                    <label class="block text-sm font-medium text-slate-700">Mobile<input name="mobile_number" value="{{ old('mobile_number', $vendor->mobile_number) }}" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"></label>
+                    <label class="block text-sm font-medium text-slate-700">Office phone<input name="office_number" value="{{ old('office_number', $vendor->office_number) }}" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"></label>
+                    <label class="block text-sm font-medium text-slate-700 sm:col-span-2">Approved login email<input value="{{ $vendor->email }}" disabled class="mt-1.5 block w-full cursor-not-allowed rounded-lg border-slate-200 bg-slate-100 text-sm text-slate-500"><span class="mt-1 block text-xs text-slate-500">Contact Kathford administration to change this email.</span></label>
+                    <label class="block text-sm font-medium text-slate-700 sm:col-span-2">Address<textarea name="address" rows="3" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">{{ old('address', $vendor->address) }}</textarea></label>
+                </div>
+            </section>
+            <section class="rounded-xl border border-amber-200 bg-white p-5"><div class="mb-5"><h2 class="font-bold text-slate-900">Bank details</h2><p class="mt-1 text-sm text-amber-700">Used by Kathford finance for payment processing. Account numbers are stored encrypted.</p></div><div class="grid gap-4 sm:grid-cols-2"><label class="block text-sm font-medium text-slate-700">Bank name<input name="bank_name" value="{{ old('bank_name', $vendor->bank_name) }}" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"></label><label class="block text-sm font-medium text-slate-700">Account name<input name="bank_account_name" value="{{ old('bank_account_name', $vendor->bank_account_name) }}" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"></label><label class="block text-sm font-medium text-slate-700 sm:col-span-2">Account number<input name="bank_account_number" placeholder="Current: {{ $vendor->maskedBankAccount() }} — leave blank to keep it" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"></label></div></section>
+            <section class="rounded-xl border border-slate-200 bg-white p-5"><label class="block text-sm font-medium text-slate-700">Additional notes<textarea name="notes" rows="3" class="mt-1.5 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">{{ old('notes', $vendor->notes) }}</textarea></label></section>
+            <button class="rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-700">Save information</button>
+        </form>
+    </main>
+</body>
+</html>

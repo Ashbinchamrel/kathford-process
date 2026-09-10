@@ -1,0 +1,25 @@
+<?php $__env->startSection('planning-content'); ?>
+<?php
+$rows=old('items',$items->toArray());if(!$rows)$rows=[['title'=>'']];
+$type=$document->type;
+?>
+<form class="space-y-4" method="POST" action="<?php echo e($document->exists?route('planning.update',$document):route('planning.store')); ?>">
+<?php echo csrf_field(); ?> <?php if($document->exists): ?> <?php echo method_field('PUT'); ?> <?php endif; ?>
+<input type="hidden" name="type" value="<?php echo e($type); ?>"><input type="hidden" name="version" value="<?php echo e($document->version); ?>">
+<div class="kcard p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+<div><label>Title *</label><input name="title" required value="<?php echo e(old('title',$document->title)); ?>"></div>
+<div><label>Department <?php echo e($type!=='strategy'?'*':''); ?></label><select name="department_id" <?php if($type!=='strategy'): echo 'required'; endif; ?>><option value="">College</option><?php $__currentLoopData = $departments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option value="<?php echo e($d->id); ?>" <?php if(old('department_id',$document->department_id)===$d->id): echo 'selected'; endif; ?>><?php echo e($d->name); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
+<div><label>Planning period / programme semester</label><select name="period_id"><option value="">Select period</option><?php $__currentLoopData = $periods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option value="<?php echo e($p->id); ?>" <?php if(old('period_id',$document->period_id)===$p->id): echo 'selected'; endif; ?>><?php echo e($p->name); ?> · <?php echo e($p->programme); ?> <?php echo e($p->batch); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
+<div><label>Approval chain *</label><select name="approval_chain_id" required><option value="">Select chain</option><?php $__currentLoopData = $chains; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option value="<?php echo e($c->id); ?>" <?php if(old('approval_chain_id',$document->approval_chain_id)===$c->id): echo 'selected'; endif; ?>><?php echo e($c->name); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
+<?php if($type!=='strategy'): ?><div><label>Linked approved <?php echo e(['goals'=>'strategy','plan'=>'semester goals','budget'=>'semester plan'][$type]); ?></label><select name="parent_id"><option value="">Operational / unlinked</option><?php $__currentLoopData = $parents->where('type',['goals'=>'strategy','plan'=>'goals','budget'=>'plan'][$type]); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option value="<?php echo e($p->id); ?>" <?php if(old('parent_id',$document->parent_id)===$p->id): echo 'selected'; endif; ?>><?php echo e($p->title); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div><?php endif; ?>
+<div class="md:col-span-2"><label>Purpose / theme</label><textarea name="description" rows="2"><?php echo e(old('description',$document->description)); ?></textarea></div>
+</div>
+<div class="kcard p-5 space-y-3" x-data="{count:<?php echo e(count($rows)); ?>}"><h3 class="font-semibold"><?php echo e($type==='budget'?'Budget lines':($type==='plan'?'Activities':'Objectives and key results')); ?></h3>
+<div id="planning-items"><?php $__currentLoopData = $rows; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i=>$row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php echo $__env->make('planning.item-fields', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></div>
+<template id="planning-item-template"><?php $i='__INDEX__';$row=[]; ?> <?php echo $__env->make('planning.item-fields', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?></template>
+<button type="button" class="text-teal-700" @click="let html=document.getElementById('planning-item-template').innerHTML.replaceAll('__INDEX__',count++); document.getElementById('planning-items').insertAdjacentHTML('beforeend',html)">+ Add <?php echo e($type==='plan'?'activity':'item'); ?></button>
+</div><button class="btn-primary">Save draft</button>
+</form>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('planning.layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/ashbinkumarchamrel/Downloads/kathford-process/resources/views/planning/edit.blade.php ENDPATH**/ ?>

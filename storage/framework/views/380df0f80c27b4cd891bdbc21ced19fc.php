@@ -1,0 +1,279 @@
+<?php $__env->startSection('title', 'New Activity Form'); ?>
+<?php $__env->startSection('page-title', 'New Activity Form'); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="max-w-4xl" x-data="formBuilder()">
+
+    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('activity_forms.create')): ?>
+<form method="POST" action="<?php echo e(route('activity-forms.store')); ?>" enctype="multipart/form-data" id="activity-form">
+        <?php echo csrf_field(); ?>
+<input type="hidden" name="_fiscal_year_id" value="<?php echo e($workingFiscalYear?->id); ?>">
+
+        
+        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-4">
+            <h2 class="text-base font-semibold text-gray-800 mb-5 pb-3 border-b border-gray-100">Section 1 – Form Details</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Form Category <span class="text-red-500">*</span></label>
+                    <select name="category_id" required x-model="categoryId" @change="fetchCategory"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                        <option value="">Select a category…</option>
+                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($cat->id); ?>" <?php echo e(old('category_id') == $cat->id ? 'selected' : ''); ?>><?php echo e($cat->name); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                    <?php $__errorArgs = ['form_category_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-xs mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Department <span class="text-red-500">*</span></label>
+                    <select name="department_id" x-model="departmentId" @change="budgetId = ''" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                        <option value="">Select department…</option>
+                        <?php $__currentLoopData = $departments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dept): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($dept->id); ?>" <?php echo e(old('department_id') == $dept->id ? 'selected' : ''); ?>><?php echo e($dept->name); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </select>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Title / Subject <span class="text-red-500">*</span></label>
+                    <input type="hidden" name="activity_name" :value="selectedBudgetTitle">
+                    <label for="budget-search" class="sr-only">Search Title / Subject</label>
+                    <input id="budget-search" type="search" x-model="budgetSearch" placeholder="Search activity title or fiscal year…" class="w-full mb-2 border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <p x-show="filteredBudgets.length === 0" class="text-sm text-gray-500 mb-2" role="status">No matching budget activities.</p>
+                    <select name="budget_id" x-model="budgetId" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                        <option value="">Select an allocated budget activity…</option>
+                        <template x-for="budget in filteredBudgets" :key="budget.id">
+                            <option :value="budget.id" x-text="`${budget.title} — FY ${budget.fiscal_year} (Remaining: ${formatNPR(budget.remaining)})`"></option>
+                        </template>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1" x-show="departmentId && matchingBudgets.length === 0">No active budget activity is available for this department. Ask Finance to add one in Budgets.</p>
+                    <div class="mt-2 rounded-lg bg-teal-50 border border-teal-100 px-3 py-2 text-xs text-teal-800" x-show="selectedBudget">
+                        Allocation: <span class="font-semibold" x-text="formatNPR(selectedBudget?.allocated)"></span>
+                        <span class="mx-1">·</span> Current commitments: <span class="font-semibold" x-text="formatNPR(selectedBudget?.reserved)"></span>
+                        <span class="mx-1">·</span> Remaining balance: <span class="font-semibold" x-text="formatNPR(selectedBudget?.remaining)"></span>
+                    </div>
+                    <div class="mt-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800" x-show="isOverBudget">
+                        Budget variance: this request is <span class="font-semibold" x-text="formatNPR(budgetVariance)"></span> above the current remaining balance. This is shown for reference only and will not change the approval process.
+                    </div>
+                    <?php $__errorArgs = ['budget_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-xs mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Proposed Date</label>
+                    <input type="date" name="deadline_date" value="<?php echo e(old('deadline_date')); ?>"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                </div>
+
+                
+                <div class="sm:col-span-2" x-show="showReason" x-cloak>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Reason / Justification <span class="text-red-500">*</span></label>
+                    <textarea name="unplanned_reason" rows="3" :required="showReason"
+                              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none resize-none"><?php echo e(old('unplanned_reason')); ?></textarea>
+                    <?php $__errorArgs = ['unplanned_reason'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-xs mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="remarks" rows="3"
+                              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none resize-none"><?php echo e(old('remarks')); ?></textarea>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-4" x-show="showLogistics" x-cloak>
+            <div class="flex items-center justify-between mb-5 pb-3 border-b border-gray-100">
+                <h2 class="text-base font-semibold text-gray-800">Section 2 – Logistics / Budget</h2>
+                <button type="button" @click="addItem()"
+                        class="flex items-center gap-1 text-teal-600 hover:text-teal-700 text-sm font-medium">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Add Row
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500 w-8">#</th>
+                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500">Description</th>
+                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500 w-28">Qty</th>
+                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500 w-24">Unit</th>
+                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500 w-32">Rate (NPR)</th>
+                            <th class="px-3 py-2 text-right text-xs font-semibold text-gray-500 w-32">Amount</th>
+                            <th class="w-8"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="(item, idx) in items" :key="item.id">
+                            <tr class="border-t border-gray-100">
+                                <td class="px-3 py-2 text-gray-400" x-text="idx + 1"></td>
+                                <td class="px-3 py-2">
+                                    <input type="text" :name="`line_items[${idx}][item_name]`" x-model="item.description"
+                                           class="w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-teal-400 outline-none" required>
+                                </td>
+                                <td class="px-3 py-2">
+                                    <input type="number" :name="`line_items[${idx}][quantity]`" x-model.number="item.quantity"
+                                           @input="calcAmount(item)" step="0.01" min="0.01"
+                                           class="w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-teal-400 outline-none" required>
+                                </td>
+                                <td class="px-3 py-2">
+                                    <input type="text" :name="`line_items[${idx}][unit]`" x-model="item.unit"
+                                           placeholder="pcs"
+                                           class="w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-teal-400 outline-none">
+                                </td>
+                                <td class="px-3 py-2">
+                                    <input type="number" :name="`line_items[${idx}][rate]`" x-model.number="item.rate"
+                                           @input="calcAmount(item)" step="0.01" min="0"
+                                           class="w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-teal-400 outline-none" required>
+                                </td>
+                                <td class="px-3 py-2 text-right font-medium text-gray-700" x-text="formatNPR(item.amount)"></td>
+                                <td class="px-2 py-2">
+                                    <button type="button" @click="removeItem(idx)" x-show="items.length > 1"
+                                            class="text-red-400 hover:text-red-600">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                    <tfoot>
+                        <tr class="border-t-2 border-gray-200 bg-gray-50">
+                            <td colspan="5" class="px-3 py-2 text-right text-sm font-semibold text-gray-700">Total Estimated Amount</td>
+                            <td class="px-3 py-2 text-right font-bold text-gray-900" x-text="formatNPR(total)"></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        
+        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-4">
+            <h2 class="text-base font-semibold text-gray-800 mb-5 pb-3 border-b border-gray-100">Section 3 – Attachments</h2>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Files</label>
+                    <input type="file" name="attachments[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
+                    <p class="text-xs text-gray-400 mt-1">PDF, Word, Excel, Images (max 10MB each)</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Or Link to External Document</label>
+                    <input type="url" name="external_link" value="<?php echo e(old('external_link')); ?>"
+                           placeholder="https://drive.google.com/..."
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="flex items-center gap-3">
+            <button type="submit" name="action" value="draft"
+                    class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                Save as Draft
+            </button>
+            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('activity_forms.submit')): ?>
+<button type="submit" name="action" value="submit"
+                    class="px-6 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-lg text-sm font-semibold transition-colors">
+                Submit for Approval
+            </button>
+<?php endif; ?>
+            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('activity_forms.view')): ?>
+<a href="<?php echo e(route('activity-forms.index')); ?>" class="text-gray-500 hover:text-gray-700 text-sm ml-auto">Cancel</a>
+<?php endif; ?>
+        </div>
+    </form>
+<?php endif; ?>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startPush('scripts'); ?>
+<script>
+function formBuilder() {
+    return {
+        categories: <?php echo json_encode($categories->keyBy('id')->map(fn($cat) => ['requires_reason' => $cat->requires_reason, 'requires_logistic_table' => $cat->requires_logistic_table]), 512) ?>,
+        budgets: <?php echo json_encode($budgetOptions, 15, 512) ?>,
+        categoryId: '<?php echo e(old('category_id', '')); ?>',
+        departmentId: '<?php echo e(old('department_id', '')); ?>',
+        budgetId: '<?php echo e(old('budget_id', '')); ?>',
+        showReason: false,
+        showLogistics: true,
+        items: [{ id: 1, description: '', quantity: 1, unit: '', rate: 0, amount: 0 }],
+        nextId: 2,
+
+        init() {
+            const cat = this.categories[this.categoryId];
+            if (cat) {
+                this.showReason = cat.requires_reason;
+                this.showLogistics = cat.requires_logistic_table;
+            }
+        },
+
+        get matchingBudgets() { return this.budgets.filter(b => b.department_id === this.departmentId); },
+        budgetSearch: '',
+        get filteredBudgets() { return this.matchingBudgets.filter(b => b.id === this.budgetId || `${b.title} ${b.fiscal_year}`.toLowerCase().includes(this.budgetSearch.trim().toLowerCase())); },
+        get selectedBudget() { return this.matchingBudgets.find(b => b.id === this.budgetId) || null; },
+        get selectedBudgetTitle() { return this.selectedBudget?.title || ''; },
+        get isOverBudget() { return !!this.selectedBudget && this.total > Number(this.selectedBudget.remaining || 0) + 0.009; },
+        get budgetVariance() { return this.isOverBudget ? this.total - Number(this.selectedBudget.remaining || 0) : 0; },
+
+        get total() {
+            return this.items.reduce((sum, i) => sum + (i.amount || 0), 0);
+        },
+
+        calcAmount(item) {
+            item.amount = (parseFloat(item.quantity) || 0) * (parseFloat(item.rate) || 0);
+        },
+
+        addItem() {
+            this.items.push({ id: this.nextId++, description: '', quantity: 1, unit: '', rate: 0, amount: 0 });
+        },
+
+        removeItem(idx) {
+            this.items.splice(idx, 1);
+        },
+
+        formatNPR(val) {
+            return 'NPR ' + (parseFloat(val) || 0).toLocaleString('en-NP', { minimumFractionDigits: 2 });
+        },
+
+        fetchCategory() {
+            const id = this.categoryId;
+            if (!id) return;
+            // Inspect category flags from embedded data
+            const cat = this.categories[id];
+            if (cat) {
+                this.showReason    = cat.requires_reason;
+                this.showLogistics = cat.requires_logistic_table;
+            }
+        }
+    }
+}
+</script>
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/ashbinkumarchamrel/Downloads/kathford-process/resources/views/activity-forms/create.blade.php ENDPATH**/ ?>
