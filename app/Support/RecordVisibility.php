@@ -18,11 +18,25 @@ class RecordVisibility
         'checklists' => [\App\Models\ProcurementChecklist::class, null, 'checklists'],
     ];
 
+    /**
+     * Modules that are back-office work queues (RFQ, PO, Payments, ...) rather
+     * than personal submissions: anyone granted the module's `.view`
+     * permission can see every record, not just ones they created or were
+     * personally assigned/chained to. Activity Forms are deliberately
+     * excluded — those are individual staff submissions, and their `.view`
+     * permission is typically granted broadly, so they stay scoped to
+     * ownership + approval-chain membership.
+     */
+    public const QUEUE_MODULES = [
+        'rfq', 'purchase_orders', 'payments', 'payment_authorisations', 'vendors', 'grn', 'checklists',
+    ];
+
     public static function apply(Builder $query, User $user): Builder
     {
         if ($user->isSuperAdmin()) return $query;
         foreach (self::MODULES as [$class, $owner, $module]) {
             if (! ($query->getModel() instanceof $class)) continue;
+            if (in_array($module, self::QUEUE_MODULES, true) && $user->can($module.'.view')) return $query;
             return $query->where(function ($q) use ($owner, $module, $user) {
                 if ($owner) {
                     $q->where($q->getModel()->qualifyColumn($owner), $user->id);
