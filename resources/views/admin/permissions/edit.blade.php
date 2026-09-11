@@ -27,8 +27,8 @@
                 <p class="mt-2 text-sm text-slate-300">Give access by procurement workflow, then refine individual actions where necessary.</p>
             </div>
             <div class="rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm">
-                <p class="text-xs font-semibold uppercase tracking-wider text-slate-300">Assigned role</p>
-                <p class="mt-1 font-bold text-white">{{ $user->role?->label ?? 'No role assigned' }}</p>
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-300">Assigned role{{ $user->allRoles()->count() > 1 ? 's' : '' }}</p>
+                <p class="mt-1 font-bold text-white">{{ $user->roleLabel() ?: 'No role assigned' }}</p>
                 <p class="mt-1 text-xs text-slate-300">{{ $user->email }}</p>
             </div>
         </div>

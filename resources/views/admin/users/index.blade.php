@@ -59,7 +59,11 @@
                         </td>
                         <td class="px-5 py-3 text-gray-500">{{ $user->email }}</td>
                         <td class="px-5 py-3">
-                            <span class="px-2 py-0.5 bg-navy-50 text-navy-700 rounded text-xs font-medium" style="background-color:#EBF0F7;color:#0B1E3D;">{{ $user->role?->display_name }}</span>
+                            <div class="flex flex-wrap gap-1">
+                                @foreach($user->allRoles() as $role)
+                                    <span class="px-2 py-0.5 bg-navy-50 text-navy-700 rounded text-xs font-medium" style="background-color:#EBF0F7;color:#0B1E3D;">{{ $role->display_name }}</span>
+                                @endforeach
+                            </div>
                         </td>
                         <td class="px-5 py-3 text-gray-500">{{ $user->department?->name ?? '—' }}</td>
                         <td class="px-5 py-3">

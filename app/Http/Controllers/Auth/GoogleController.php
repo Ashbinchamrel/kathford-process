@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Support\TwoFactorTrust;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -25,7 +27,7 @@ class GoogleController extends Controller
     /**
      * Handle Google OAuth callback
      */
-    public function callback(): RedirectResponse
+    public function callback(Request $request): RedirectResponse
     {
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
@@ -73,6 +75,14 @@ class GoogleController extends Controller
             // Store Google user in session and redirect to 2FA setup
             session(['2fa_setup_user_id' => $user->id]);
             return redirect()->route('2fa.setup');
+        }
+
+        // ── Trusted device — skip the repeated 2FA prompt ─────
+        if (TwoFactorTrust::isTrusted($request, $user)) {
+            session(['2fa_passed' => true]);
+            Auth::login($user);
+            AuditLog::record($user, 'auth.login');
+            return redirect()->intended(route('dashboard'));
         }
 
         // ── 2FA already configured — require code ────────────

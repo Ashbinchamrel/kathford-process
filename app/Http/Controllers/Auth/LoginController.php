@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Support\TwoFactorTrust;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
@@ -33,6 +35,13 @@ class LoginController extends Controller
         if (! $user->hasTwoFactorEnabled()) {
             session(['2fa_setup_user_id' => $user->id]);
             return redirect()->route('2fa.setup');
+        }
+
+        if (TwoFactorTrust::isTrusted($request, $user)) {
+            session(['2fa_passed' => true]);
+            Auth::login($user);
+            AuditLog::record($user, 'auth.login');
+            return redirect()->intended(route('dashboard'));
         }
 
         session(['2fa_user_id' => $user->id]);

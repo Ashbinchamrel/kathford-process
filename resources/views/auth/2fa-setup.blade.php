@@ -40,6 +40,11 @@
            style="border:1.5px solid #D1D5DB;letter-spacing:0.2em;"
            onfocus="this.style.borderColor='#00A99D';" onblur="this.style.borderColor='#D1D5DB';">
 
+    <label class="flex items-center gap-2 text-sm text-gray-600 mb-4">
+        <input type="checkbox" name="remember_device" value="1" class="rounded text-teal-500">
+        Remember this device for 30 days
+    </label>
+
     <button type="submit" class="w-full py-3 rounded-lg font-semibold text-white text-sm transition-colors"
             style="background:#00A99D;"
             onmouseover="this.style.background='#008C82';" onmouseout="this.style.background='#00A99D';">

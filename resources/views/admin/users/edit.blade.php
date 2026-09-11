@@ -23,13 +23,20 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
                     <input type="text" name="name" value="{{ old('name', $user->name) }}" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Role <span class="text-red-500">*</span></label>
-                    <select name="role_id" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Roles <span class="text-red-500">*</span></label>
+                    <p class="text-xs text-gray-400 mb-2">A user can hold more than one role — e.g. Verifier on one process and Approver on another. Assign both here, then pick them per process under Approval Chains.</p>
+                    <div class="flex flex-wrap gap-x-6 gap-y-2 border border-gray-300 rounded-lg p-3">
+                        @php $selectedRoles = old('roles', $user->allRoles()->pluck('id')->all()); @endphp
                         @foreach($roles as $role)
-                            <option value="{{ $role->id }}" {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>{{ $role->display_name }}</option>
+                            <label class="flex items-center gap-2 cursor-pointer text-sm">
+                                <input type="checkbox" name="roles[]" value="{{ $role->id }}" {{ in_array($role->id, $selectedRoles) ? 'checked' : '' }} class="rounded text-teal-500">
+                                {{ $role->display_name }}
+                            </label>
                         @endforeach
-                    </select>
+                    </div>
+                    @error('roles') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    @error('roles.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>

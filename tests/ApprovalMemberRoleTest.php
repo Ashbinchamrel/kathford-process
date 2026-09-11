@@ -19,6 +19,7 @@ final class ApprovalMemberRoleTest extends TestCase
         try {
             Schema::create('roles', function (Blueprint $t) { $t->string('id'); $t->string('name'); });
             Schema::create('users', function (Blueprint $t) { $t->string('id'); $t->string('role_id'); $t->boolean('is_active'); $t->softDeletes(); });
+            Schema::create('user_roles', function (Blueprint $t) { $t->id(); $t->string('user_id'); $t->string('role_id'); });
             foreach (['verifier','approver','super_admin','finance','general'] as $role) {
                 DB::table('roles')->insert(['id' => $role, 'name' => $role]);
                 DB::table('users')->insert(['id' => $role, 'role_id' => $role, 'is_active' => true]);

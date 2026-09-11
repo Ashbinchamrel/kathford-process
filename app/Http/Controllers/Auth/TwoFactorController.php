@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Support\TwoFactorTrust;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,6 +78,10 @@ class TwoFactorController extends Controller
         session()->forget(['2fa_setup_user_id', '2fa_secret']);
         session(['2fa_passed' => true]);
 
+        if ($request->boolean('remember_device')) {
+            TwoFactorTrust::remember($request, $user);
+        }
+
         Auth::login($user);
         AuditLog::record($user, 'auth.2fa_setup_complete');
 
@@ -112,6 +117,11 @@ class TwoFactorController extends Controller
 
         session()->forget('2fa_user_id');
         session(['2fa_passed' => true]); // Mark 2FA as completed for this session
+
+        if ($request->boolean('remember_device')) {
+            TwoFactorTrust::remember($request, $user);
+        }
+
         Auth::login($user);
 
         AuditLog::record($user, 'auth.login');

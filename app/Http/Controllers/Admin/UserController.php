@@ -7,6 +7,7 @@ use App\Models\AuditLog;
 use App\Models\Department;
 use App\Models\Role;
 use App\Models\User;
+use App\Support\TwoFactorTrust;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ class UserController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = User::with(['role', 'department'])->latest();
+        $query = User::with(['role', 'roles', 'department'])->latest();
 
         if ($request->search) {
             $query->where(function($q) use ($request) {
@@ -26,7 +27,7 @@ class UserController extends Controller
             });
         }
         if ($request->role_id) {
-            $query->where('role_id', $request->role_id);
+            $query->withRoleId($request->role_id);
         }
         if ($request->has('is_active') && $request->is_active !== '') {
             $query->where('is_active', (bool) $request->is_active);
@@ -59,23 +60,28 @@ class UserController extends Controller
                     }
                 },
             ],
-            'role_id'       => ['required', 'exists:roles,id'],
+            'roles'         => ['required', 'array', 'min:1'],
+            'roles.*'       => ['distinct', 'exists:roles,id'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'phone'         => ['nullable', 'string', 'max:20'],
             'designation'   => ['nullable', 'string', 'max:100'],
             'password'      => ['required', 'string', 'min:12', 'confirmed'],
         ]);
 
+        $primaryRoleId     = $request->roles[0];
+        $additionalRoleIds = array_slice($request->roles, 1);
+
         $user = User::create([
             'name'          => $request->name,
             'email'         => $request->email,
-            'role_id'       => $request->role_id,
+            'role_id'       => $primaryRoleId,
             'department_id' => $request->department_id,
             'phone'         => $request->phone,
             'designation'   => $request->designation,
             'password'      => Hash::make($request->password),
             'is_active'     => true,
         ]);
+        $user->roles()->sync($additionalRoleIds);
 
         AuditLog::record(Auth::user(), 'user.created', $user, $user->email);
 
@@ -94,7 +100,8 @@ class UserController extends Controller
     {
         $request->validate([
             'name'          => ['required', 'string', 'max:255'],
-            'role_id'       => ['required', 'exists:roles,id'],
+            'roles'         => ['required', 'array', 'min:1'],
+            'roles.*'       => ['distinct', 'exists:roles,id'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'phone'         => ['nullable', 'string', 'max:20'],
             'designation'   => ['nullable', 'string', 'max:100'],
@@ -107,11 +114,17 @@ class UserController extends Controller
             return back()->withErrors(['is_active' => 'You cannot deactivate your own account.']);
         }
 
-        $old = $user->only(['name', 'role_id', 'is_active']);
+        $old = array_merge(
+            $user->only(['name', 'role_id', 'is_active']),
+            ['roles' => $user->allRoles()->pluck('name')->all()],
+        );
+
+        $primaryRoleId     = $request->roles[0];
+        $additionalRoleIds = array_slice($request->roles, 1);
 
         $changes = [
             'name'          => $request->name,
-            'role_id'       => $request->role_id,
+            'role_id'       => $primaryRoleId,
             'department_id' => $request->department_id,
             'phone'         => $request->phone,
             'designation'   => $request->designation,
@@ -123,8 +136,14 @@ class UserController extends Controller
         }
 
         $user->update($changes);
+        $user->roles()->sync($additionalRoleIds);
 
-        AuditLog::record(Auth::user(), 'user.updated', $user, $user->email, $old, $user->only(['name', 'role_id', 'is_active']));
+        $new = array_merge(
+            $user->only(['name', 'role_id', 'is_active']),
+            ['roles' => $user->fresh()->allRoles()->pluck('name')->all()],
+        );
+
+        AuditLog::record(Auth::user(), 'user.updated', $user, $user->email, $old, $new);
 
         return redirect()->route('admin.users.index')
             ->with('success', "User {$user->name} updated.");
@@ -140,6 +159,7 @@ class UserController extends Controller
             'two_factor_recovery_codes'=> null,
             'two_factor_confirmed_at'  => null,
         ]);
+        TwoFactorTrust::forget($user);
 
         AuditLog::record(Auth::user(), 'user.2fa_reset', $user, $user->email);
 

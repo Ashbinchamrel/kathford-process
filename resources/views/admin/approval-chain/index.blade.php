@@ -188,7 +188,7 @@
                                    class="w-full bg-transparent text-xs focus:outline-none">
                         </div>
                         <div class="max-h-40 overflow-y-auto p-2 space-y-1">
-                            @if($verifierUsers->isEmpty())<p class="p-2 text-xs text-gray-500">No active users have the Verifier role. Assign this role under Users first.</p>@endif
+                            @if($verifierUsers->isEmpty())<p class="p-2 text-xs text-gray-500">No active users have the Verifier role. Assign it to at least one user under Users first.</p>@endif
                             @foreach($verifierUsers as $user)
                             <label class="flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-gray-50"
                                    x-show="!verifierSearch || @js(strtolower($user->name.' '.$user->email)).includes(verifierSearch.toLowerCase())">
@@ -200,7 +200,7 @@
                                      style="background:#1C3557;">{{ substr($user->name, 0, 1) }}</div>
                                 <div class="min-w-0 flex-1">
                                     <p class="text-xs font-medium text-gray-800">{{ $user->name }}</p>
-                                    <p class="text-xs text-gray-400">{{ $user->role?->display_name }} · {{ $user->email }}</p>
+                                    <p class="text-xs text-gray-400">{{ $user->roleLabel() }} · {{ $user->email }}</p>
                                 </div>
                                 <span x-show="form.verifier_ids.includes('{{ $user->id }}')" class="inline-flex items-center gap-1 text-xs font-semibold text-slate-600"><span x-text="'L'+verifierLayer('{{ $user->id }}')"></span><button type="button" @click.prevent="moveVerifier('{{ $user->id }}', -1)" class="rounded border px-1 hover:bg-gray-100">↑</button><button type="button" @click.prevent="moveVerifier('{{ $user->id }}', 1)" class="rounded border px-1 hover:bg-gray-100">↓</button></span>
                             </label>
@@ -226,7 +226,7 @@
                                    class="w-full bg-transparent text-xs focus:outline-none">
                         </div>
                         <div class="max-h-40 overflow-y-auto p-2 space-y-1">
-                            @if($approverUsers->isEmpty())<p class="p-2 text-xs text-gray-500">No active users have the Approver role. Assign this role under Users first.</p>@endif
+                            @if($approverUsers->isEmpty())<p class="p-2 text-xs text-gray-500">No active users have the Approver role. Assign it to at least one user under Users first.</p>@endif
                             @foreach($approverUsers as $user)
                             <label class="flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-gray-50"
                                    x-show="!approverSearch || @js(strtolower($user->name.' '.$user->email)).includes(approverSearch.toLowerCase())">
@@ -238,7 +238,7 @@
                                      style="background:#00A99D;">{{ substr($user->name, 0, 1) }}</div>
                                 <div class="min-w-0 flex-1">
                                     <p class="text-xs font-medium text-gray-800">{{ $user->name }}</p>
-                                    <p class="text-xs text-gray-400">{{ $user->role?->display_name }} · {{ $user->email }}</p>
+                                    <p class="text-xs text-gray-400">{{ $user->roleLabel() }} · {{ $user->email }}</p>
                                 </div>
                                 <span x-show="form.approver_ids.includes('{{ $user->id }}')" class="inline-flex items-center gap-1 text-xs font-semibold text-slate-600"><span x-text="'L'+approverLayer('{{ $user->id }}')"></span><button type="button" @click.prevent="moveApprover('{{ $user->id }}', -1)" class="rounded border px-1 hover:bg-gray-100">↑</button><button type="button" @click.prevent="moveApprover('{{ $user->id }}', 1)" class="rounded border px-1 hover:bg-gray-100">↓</button></span>
                             </label>
