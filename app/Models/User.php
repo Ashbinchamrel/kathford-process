@@ -15,6 +15,7 @@ use Illuminate\Support\Collection;
 class User extends Authenticatable
 {
     public ?array $_permissionKeys = null;
+    private ?Collection $_allRoles = null;
 
     use HasFactory, Notifiable, HasUuids, SoftDeletes;
 
@@ -90,7 +91,7 @@ class User extends Authenticatable
      */
     public function allRoles(): Collection
     {
-        return collect([$this->role])->filter()->merge($this->roles)->unique('id');
+        return $this->_allRoles ??= collect([$this->role])->filter()->merge($this->roles)->unique('id');
     }
 
     public function roleLabel(): string

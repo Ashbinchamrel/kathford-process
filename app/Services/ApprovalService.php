@@ -75,12 +75,12 @@ class ApprovalService
 
             if ($decision === 'approved' && $newStatus === 'pending_verification') {
                 $this->notifyNextVerifier($form, $chain);
-                $this->notifyOwner($form, 'Verification layer completed', "{$this->documentType($form)} {$this->documentNumber($form)} passed verifier layer {$layer} and is waiting for the next verifier.");
+                $this->notifyOwner($form, 'Approved', "{$this->documentType($form)} {$this->documentNumber($form)} was approved and sent to the next verifier.");
             } elseif ($decision === 'approved') {
                 $this->notifyFirstApprover($form, $chain);
-                $this->notifyOwner($form, 'Verification complete', "{$this->documentType($form)} {$this->documentNumber($form)} passed all verifier layers and is waiting for approval.");
+                $this->notifyOwner($form, 'Approved', "{$this->documentType($form)} {$this->documentNumber($form)} was approved and sent for approval.");
             } else {
-                $this->notifyOwner($form, $decision === 'rejected' ? 'Document rejected' : 'Changes requested', "{$this->documentType($form)} {$this->documentNumber($form)} was returned from verifier layer {$layer}.");
+                $this->notifyOwner($form, $decision === 'rejected' ? 'Rejected' : 'Modification requested', "{$this->documentType($form)} {$this->documentNumber($form)} was ".($decision === 'rejected' ? 'rejected' : 'sent back for modification').".");
             }
 
             AuditLog::record($actor, "form.verified.{$decision}", $form, $this->documentNumber($form));
@@ -117,16 +117,16 @@ class ApprovalService
 
             if ($decision === 'approved' && $newStatus === 'pending_approval') {
                 $this->notifyNextApprover($form, $chain);
-                $this->notifyOwner($form, 'Approval layer completed', "{$this->documentType($form)} {$this->documentNumber($form)} passed approver layer {$layer} and is waiting for the next approver.");
+                $this->notifyOwner($form, 'Approved', "{$this->documentType($form)} {$this->documentNumber($form)} was approved and sent to the next approver.");
             } elseif ($decision === 'approved') {
                 if ($form instanceof ActivityForm) {
                     $form->load('category');
                     if ($form->category?->bypasses_procurement_to_payment) app(ActivityPaymentService::class)->handoff($form);
                     else app(ActivityRfqService::class)->handoff($form);
                 }
-                $this->notifyOwner($form, 'Document approved', "{$this->documentType($form)} {$this->documentNumber($form)} has completed every approval layer.");
+                $this->notifyOwner($form, 'Approved', "{$this->documentType($form)} {$this->documentNumber($form)} has been fully approved.");
             } else {
-                $this->notifyOwner($form, $decision === 'rejected' ? 'Document rejected' : 'Changes requested', "{$this->documentType($form)} {$this->documentNumber($form)} was returned from approver layer {$layer}.");
+                $this->notifyOwner($form, $decision === 'rejected' ? 'Rejected' : 'Modification requested', "{$this->documentType($form)} {$this->documentNumber($form)} was ".($decision === 'rejected' ? 'rejected' : 'sent back for modification').".");
             }
 
             AuditLog::record($actor, "form.approved.{$decision}", $form, $this->documentNumber($form));
@@ -166,11 +166,11 @@ class ApprovalService
     public function pendingStepLabel(Model $form): ?string
     {
         if ($this->isPendingVerification($form)) {
-            return 'Verifier layer '.$this->currentVerifierLayer($form).' · '.($this->currentVerifier($form)?->name ?: 'No assigned verifier');
+            return $this->currentVerifier($form)?->name ?: 'No assigned verifier';
         }
 
         if ($this->isPendingApproval($form)) {
-            return 'Approver layer '.$this->currentApproverLayer($form).' · '.($this->currentApprover($form)?->name ?: 'No assigned approver');
+            return $this->currentApprover($form)?->name ?: 'No assigned approver';
         }
 
         return null;
@@ -212,7 +212,7 @@ class ApprovalService
         $layer = $this->currentVerifierLayer($form);
         $verifier = $this->verifierAt($chain, $layer);
         if ($verifier) {
-            $this->notifications->send($verifier, 'form.pending_verification', 'Verification required', "{$this->documentType($form)} {$this->documentNumber($form)} requires your verification at verifier layer {$layer}.", $this->formRoute($form));
+            $this->notifications->send($verifier, 'form.pending_verification', 'Verification required', "{$this->documentType($form)} {$this->documentNumber($form)} requires your verification.", $this->formRoute($form));
         }
     }
 
@@ -226,7 +226,7 @@ class ApprovalService
         $layer = $this->currentApproverLayer($form);
         $approver = $this->approverAt($chain, $layer);
         if ($approver) {
-            $this->notifications->send($approver, 'form.pending_approval', 'Approval required', "{$this->documentType($form)} {$this->documentNumber($form)} requires your approval at approver layer {$layer}.", $this->formRoute($form));
+            $this->notifications->send($approver, 'form.pending_approval', 'Approval required', "{$this->documentType($form)} {$this->documentNumber($form)} requires your approval.", $this->formRoute($form));
         }
     }
 

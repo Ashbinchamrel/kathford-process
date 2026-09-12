@@ -79,44 +79,46 @@
 
         {{-- Section 2 --}}
         <div class="bg-white rounded-xl border border-gray-200 p-6 mb-4" x-show="showLogistics">
-            <div class="flex items-center justify-between mb-5 pb-3 border-b border-gray-100">
+            <div class="mb-4 pb-3 border-b border-gray-100">
                 <h2 class="text-base font-semibold text-gray-800">Section 2 – Logistics / Budget</h2>
-                <button type="button" @click="addItem()" class="flex items-center gap-1 text-teal-600 hover:text-teal-700 text-sm font-medium">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    Add Row
-                </button>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead><tr class="bg-gray-50">
-                        <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500 w-8">#</th>
-                        <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500">Description</th>
-                        <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500 w-28">Qty</th>
-                        <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500 w-24">Unit</th>
-                        <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500 w-32">Rate</th>
-                        <th class="px-3 py-2 text-right text-xs font-semibold text-gray-500 w-32">Amount</th>
+                        <th class="px-2 py-1.5 text-left text-xs font-semibold text-gray-500 w-8">#</th>
+                        <th class="px-2 py-1.5 text-left text-xs font-semibold text-gray-500">Description</th>
+                        <th class="px-2 py-1.5 text-left text-xs font-semibold text-gray-500 w-24">Qty</th>
+                        <th class="px-2 py-1.5 text-left text-xs font-semibold text-gray-500 w-20">Unit</th>
+                        <th class="px-2 py-1.5 text-left text-xs font-semibold text-gray-500 w-28">Rate</th>
+                        <th class="px-2 py-1.5 text-right text-xs font-semibold text-gray-500 w-28">Amount</th>
                         <th class="w-8"></th>
                     </tr></thead>
                     <tbody>
                         <template x-for="(item, idx) in items" :key="item.id">
                             <tr class="border-t border-gray-100">
-                                <td class="px-3 py-2 text-gray-400" x-text="idx+1"></td>
-                                <td class="px-3 py-2"><input type="text" :name="`line_items[${idx}][item_name]`" x-model="item.description" class="w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-teal-400 outline-none" required><input :name="`line_items[${idx}][item_remarks]`" x-model="item.item_remarks" placeholder="Item remarks / specification" class="mt-2 w-full border border-gray-300 rounded px-2 py-1.5 text-xs"></td>
-                                <td class="px-3 py-2"><input type="number" :name="`line_items[${idx}][quantity]`" x-model.number="item.quantity" @input="calcAmount(item)" step="0.01" min="0.01" class="w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-teal-400 outline-none" required></td>
-                                <td class="px-3 py-2"><input type="text" :name="`line_items[${idx}][unit]`" x-model="item.unit" class="w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-teal-400 outline-none"></td>
-                                <td class="px-3 py-2"><input type="number" :name="`line_items[${idx}][rate]`" x-model.number="item.rate" @input="calcAmount(item)" step="0.01" min="0" class="w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-teal-400 outline-none" required></td>
-                                <td class="px-3 py-2 text-right font-medium text-gray-700" x-text="'NPR '+parseFloat(item.amount||0).toLocaleString('en-NP',{minimumFractionDigits:2})"></td>
-                                <td class="px-2 py-2"><button type="button" @click="removeItem(idx)" x-show="items.length>1" class="text-red-400 hover:text-red-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></td>
+                                <td class="px-2 py-1 text-gray-400" x-text="idx+1"></td>
+                                <td class="px-2 py-1"><input type="text" :name="`line_items[${idx}][item_name]`" x-model="item.description" class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:ring-1 focus:ring-teal-400 outline-none" required><input :name="`line_items[${idx}][item_remarks]`" x-model="item.item_remarks" placeholder="Item remarks / specification" class="mt-1 w-full border border-gray-300 rounded px-2 py-1 text-xs"></td>
+                                <td class="px-2 py-1"><input type="number" :name="`line_items[${idx}][quantity]`" x-model.number="item.quantity" @input="calcAmount(item)" step="0.01" min="0.01" class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:ring-1 focus:ring-teal-400 outline-none" required></td>
+                                <td class="px-2 py-1"><input type="text" :name="`line_items[${idx}][unit]`" x-model="item.unit" class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:ring-1 focus:ring-teal-400 outline-none"></td>
+                                <td class="px-2 py-1"><input type="number" :name="`line_items[${idx}][rate]`" x-model.number="item.rate" @input="calcAmount(item)" step="0.01" min="0" class="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:ring-1 focus:ring-teal-400 outline-none" required></td>
+                                <td class="px-2 py-1 text-right font-medium text-gray-700" x-text="'NPR '+parseFloat(item.amount||0).toLocaleString('en-NP',{minimumFractionDigits:2})"></td>
+                                <td class="px-1 py-1"><button type="button" @click="removeItem(idx)" x-show="items.length>1" class="text-red-400 hover:text-red-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></td>
                             </tr>
                         </template>
                     </tbody>
                     <tfoot><tr class="border-t-2 border-gray-200 bg-gray-50">
-                        <td colspan="5" class="px-3 py-2 text-right text-sm font-semibold text-gray-700">Total</td>
-                        <td class="px-3 py-2 text-right font-bold text-gray-900" x-text="'NPR '+total.toLocaleString('en-NP',{minimumFractionDigits:2})"></td>
+                        <td colspan="5" class="px-2 py-1.5 text-right text-sm font-semibold text-gray-700">Total</td>
+                        <td class="px-2 py-1.5 text-right font-bold text-gray-900" x-text="'NPR '+total.toLocaleString('en-NP',{minimumFractionDigits:2})"></td>
                         <td></td>
                     </tr></tfoot>
                 </table>
             </div>
+
+            <button type="button" @click="addItem()"
+                    class="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-gray-300 py-2 text-sm font-medium text-teal-600 transition-colors hover:border-teal-400 hover:bg-teal-50 hover:text-teal-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Add Row
+            </button>
         </div>
 
         {{-- Section 3: Attachments --}}

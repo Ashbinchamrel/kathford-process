@@ -68,6 +68,10 @@ class UserController extends Controller
             'password'      => ['required', 'string', 'min:12', 'confirmed'],
         ]);
 
+        if ($error = $this->invalidRoleSelection($request->roles)) {
+            return back()->withErrors(['roles' => $error])->withInput();
+        }
+
         $primaryRoleId     = $request->roles[0];
         $additionalRoleIds = array_slice($request->roles, 1);
 
@@ -112,6 +116,16 @@ class UserController extends Controller
         // Prevent disabling yourself
         if ($user->id === Auth::id() && ! $request->boolean('is_active')) {
             return back()->withErrors(['is_active' => 'You cannot deactivate your own account.']);
+        }
+
+        if ($error = $this->invalidRoleSelection($request->roles)) {
+            return back()->withErrors(['roles' => $error])->withInput();
+        }
+
+        $superAdminRoleId = Role::where('name', 'super_admin')->value('id');
+        $keepsSuperAdmin   = $superAdminRoleId && in_array($superAdminRoleId, $request->roles, true);
+        if ($user->isSuperAdmin() && ! $keepsSuperAdmin && User::withRole('super_admin')->count() <= 1) {
+            return back()->withErrors(['roles' => 'The last Super Admin account must keep the Super Admin role. Assign another Super Admin first.']);
         }
 
         $old = array_merge(
@@ -164,6 +178,18 @@ class UserController extends Controller
         AuditLog::record(Auth::user(), 'user.2fa_reset', $user, $user->email);
 
         return back()->with('success', "2FA has been reset for {$user->name}. They will set it up on next login.");
+    }
+
+    /** Super Admin already bypasses every permission check, so it can't be combined with other roles. */
+    private function invalidRoleSelection(array $roleIds): ?string
+    {
+        $superAdminRoleId = Role::where('name', 'super_admin')->value('id');
+
+        if ($superAdminRoleId && in_array($superAdminRoleId, $roleIds, true) && count($roleIds) > 1) {
+            return 'Super Admin already has full access and cannot be combined with other roles.';
+        }
+
+        return null;
     }
 
     public function destroy(User $user): RedirectResponse

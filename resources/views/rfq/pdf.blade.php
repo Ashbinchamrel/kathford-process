@@ -8,7 +8,8 @@
         .header { border-bottom: 2px solid #00A99D; padding-bottom: 12px; margin-bottom: 18px; display:table; width:100%; }
         .header-logo { display:table-cell; width:150px; vertical-align:middle; }
         .header-copy { display:table-cell; vertical-align:middle; }
-        .logo { width:136px; height:68px; padding:5px; object-fit:contain; object-position:center; background:#fff; border:1px solid #e5e7eb; border-radius:4px; }
+        .logo-frame { width:140px; height:68px; background:#fff; border:1px solid #e5e7eb; border-radius:4px; margin:0; }
+        .logo-frame td { text-align:center; vertical-align:middle; }
         h1 { color: #0B1E3D; font-size: 19px; margin: 0 0 4px; }
         .subtitle { color: #6b7280; font-size: 10px; margin: 0; }
         .ref { float: right; text-align: right; color: #0B1E3D; font-weight: bold; font-size: 12px; }
@@ -25,7 +26,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="header-logo">@if($companyLogoPath)<img class="logo" src="{{ $companyLogoPath }}" alt="Organisation logo">@endif</div>
+        <div class="header-logo">@if($companyLogoPath)<table class="logo-frame"><tr><td><img src="{{ $companyLogoPath }}" width="{{ $logoWidth }}" height="{{ $logoHeight }}" alt="Organisation logo"></td></tr></table>@endif</div>
         <div class="header-copy"><div class="ref">{{ $rfq->rfq_number }}<br><span style="color:#6b7280;font-size:9px;font-weight:normal">Issued {{ $rfq->created_at->format('d M Y') }}</span></div><h1>Request for Quotation</h1><p class="subtitle">Procurement record</p></div>
     </div>
 

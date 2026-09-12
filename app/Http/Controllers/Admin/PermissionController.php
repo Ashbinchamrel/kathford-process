@@ -15,6 +15,8 @@ class PermissionController extends Controller
     /** Show permission matrix for a user */
     public function edit(User $user): View
     {
+        $user->loadMissing(['role', 'roles']);
+
         abort_if($user->isSuperAdmin(), 403, 'Super Admin permissions cannot be modified.');
 
         $moduleOrder = [

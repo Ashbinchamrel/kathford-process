@@ -270,7 +270,7 @@
                 @endif
                 <div class="flex-1 min-w-0">
                     <p class="text-white text-xs font-semibold truncate">{{ auth()->user()->name }}</p>
-                    <p class="text-xs truncate" style="color:#7A9CC0;">{{ auth()->user()->role?->display_name }}</p>
+                    <p class="text-xs truncate" style="color:#7A9CC0;">{{ auth()->user()->roleLabel() }}</p>
                 </div>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

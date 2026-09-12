@@ -136,6 +136,7 @@ Route::middleware(['auth', 'active', \App\Http\Middleware\EnsureRecordVisibility
     Route::post('purchase-orders/{purchaseOrder}/verify', [PurchaseOrderController::class, 'verify'])->middleware('can:purchase_orders.verify')->name('purchase-orders.verify');
     Route::post('purchase-orders/{purchaseOrder}/approve', [PurchaseOrderController::class, 'approve'])->middleware('can:purchase_orders.approve')->name('purchase-orders.approve');
     Route::get('purchase-orders/{purchaseOrder}/vendor-bills/{vendorBill}/download', [PurchaseOrderController::class, 'downloadVendorBill'])->middleware('can:purchase_orders.view')->name('purchase-orders.vendor-bills.download');
+    Route::get('purchase-orders/{purchaseOrder}/vendor-bills/{vendorBill}/view', [PurchaseOrderController::class, 'viewVendorBill'])->middleware('can:purchase_orders.view')->name('purchase-orders.vendor-bills.view');
 
     // Bill-driven control checklist (replaces the operational use of Goods Received).
     Route::get('checklists', [ProcurementChecklistController::class, 'index'])->middleware('can:checklists.view')->name('checklists.index');

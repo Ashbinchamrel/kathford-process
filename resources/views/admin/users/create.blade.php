@@ -40,14 +40,15 @@
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Roles <span class="text-red-500">*</span></label>
                     <p class="text-xs text-gray-400 mb-2">A user can hold more than one role — e.g. Verifier on one process and Approver on another.</p>
-                    <div class="flex flex-wrap gap-x-6 gap-y-2 border border-gray-300 rounded-lg p-3">
+                    <div class="flex flex-wrap gap-x-6 gap-y-2 border border-gray-300 rounded-lg p-3" data-role-checkbox-group>
                         @foreach($roles as $role)
                             <label class="flex items-center gap-2 cursor-pointer text-sm">
-                                <input type="checkbox" name="roles[]" value="{{ $role->id }}" {{ in_array($role->id, old('roles', [])) ? 'checked' : '' }} class="rounded text-teal-500">
+                                <input type="checkbox" name="roles[]" value="{{ $role->id }}" data-role-name="{{ $role->name }}" {{ in_array($role->id, old('roles', [])) ? 'checked' : '' }} class="rounded text-teal-500">
                                 {{ $role->display_name }}
                             </label>
                         @endforeach
                     </div>
+                    <p class="text-xs text-gray-400 mt-1">Super Admin already has full access, so it can't be combined with other roles.</p>
                     @error('roles') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     @error('roles.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -76,4 +77,22 @@
         </div>
     </form>
 </div>
+
+@push('scripts')
+<script>
+document.querySelectorAll('[data-role-checkbox-group]').forEach(function (group) {
+    group.addEventListener('change', function (e) {
+        if (!e.target.matches('input[type="checkbox"][data-role-name]')) return;
+        const boxes = Array.from(group.querySelectorAll('input[type="checkbox"][data-role-name]'));
+        const isSuperAdmin = e.target.dataset.roleName === 'super_admin';
+        if (isSuperAdmin && e.target.checked) {
+            boxes.forEach(box => { if (box !== e.target) box.checked = false; });
+        } else if (!isSuperAdmin && e.target.checked) {
+            const superAdmin = boxes.find(box => box.dataset.roleName === 'super_admin');
+            if (superAdmin) superAdmin.checked = false;
+        }
+    });
+});
+</script>
+@endpush
 @endsection

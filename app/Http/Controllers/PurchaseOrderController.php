@@ -287,15 +287,26 @@ class PurchaseOrderController extends Controller
 
     public function downloadVendorBill(PurchaseOrder $purchaseOrder, VendorBill $vendorBill): \Symfony\Component\HttpFoundation\StreamedResponse
     {
+        return Storage::disk('private')->download(
+            ...$this->resolveVendorBillFile($purchaseOrder, $vendorBill),
+        );
+    }
+
+    public function viewVendorBill(PurchaseOrder $purchaseOrder, VendorBill $vendorBill): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        return Storage::disk('private')->response(
+            ...$this->resolveVendorBillFile($purchaseOrder, $vendorBill),
+        );
+    }
+
+    /** Shared guard for the vendor-bill view/download endpoints: [disk_path, name, headers]. */
+    private function resolveVendorBillFile(PurchaseOrder $purchaseOrder, VendorBill $vendorBill): array
+    {
         $this->authorize('view', $purchaseOrder);
         abort_unless($vendorBill->purchase_order_id === $purchaseOrder->id, 404);
         abort_unless(Storage::disk('private')->exists($vendorBill->disk_path), 404);
 
-        return Storage::disk('private')->download(
-            $vendorBill->disk_path,
-            $vendorBill->original_name,
-            ['Content-Type' => $vendorBill->mime_type],
-        );
+        return [$vendorBill->disk_path, $vendorBill->original_name, ['Content-Type' => $vendorBill->mime_type]];
     }
 
     public function sendToVendor(PurchaseOrder $purchaseOrder): RedirectResponse
@@ -308,7 +319,7 @@ class PurchaseOrderController extends Controller
     public function submit(PurchaseOrder $purchaseOrder): RedirectResponse
     {
         $this->authorize('update', $purchaseOrder);
-        abort_unless(in_array($purchaseOrder->status, ['generated', 'rejected']), 422, 'Only a generated or returned Purchase Order can be submitted.');
+        abort_unless($purchaseOrder->isEditable(), 422, 'Only a generated or returned Purchase Order can be submitted.');
 
         $chain = $this->configuredPurchaseOrderChain();
         abort_unless($chain, 422, 'An administrator must configure an active Purchase Order approval chain in Administration → Approval Chains before submitting this PO.');

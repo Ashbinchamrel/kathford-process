@@ -164,7 +164,7 @@
     {{-- Actions --}}
     <div class="flex flex-wrap gap-3">
 
-                @if(in_array($po->status ?? $purchaseOrder->status, ['generated', 'rejected']))
+                @if($purchaseOrder->isEditable())
                 @can('purchase_orders.edit')
 <a href="{{ route('purchase-orders.edit', $purchaseOrder) }}" class="btn-secondary">Edit</a>
 @endcan
@@ -182,7 +182,7 @@
             Download PDF
         </a>
 @endcan
-        @if(in_array($po->status, ['generated', 'rejected']))
+        @if($po->isEditable())
         @can('purchase_orders.submit')
 <form method="POST" action="{{ route('purchase-orders.submit', $po) }}">
             @csrf

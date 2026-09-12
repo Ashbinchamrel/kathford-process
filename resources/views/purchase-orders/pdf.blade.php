@@ -6,10 +6,11 @@
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 11px; color: #1a1a1a; background: #fff; }
-    .header { width:100%; background: #0B1E3D; color: #fff; padding: 18px 30px; display: table; }
+    .header { width:100%; border-bottom: 2px solid #00A99D; padding: 0 0 14px; margin-bottom: 4px; display: table; }
     .header-cell { display:table-cell; vertical-align:middle; }
-    .header h1 { font-size: 22px; font-weight: 700; margin:0; }
-    .brand-logo { display:block; width:150px; height:78px; padding:6px; background:#fff; border-radius:4px; object-fit:contain; object-position:center; }
+    .header h1 { font-size: 22px; font-weight: 700; margin:0; color: #0B1E3D; }
+    .logo-frame { width:158px; height:78px; background:#fff; border:1px solid #e5e7eb; border-radius:4px; margin:0; }
+    .logo-frame td { text-align:center; vertical-align:middle; }
     .header .po-num { font-size: 16px; font-family: monospace; color: #00A99D; }
     .content { padding: 25px 30px; }
     .parties { display: flex; gap: 30px; margin-bottom: 20px; }
@@ -37,11 +38,11 @@
 <body>
 @php($companyName = $company['company_name'] ?? config('kathford.college_name'))
 <div class="header">
-    <div class="header-cell" style="width:165px">@if($companyLogoPath)<img class="brand-logo" src="{{ $companyLogoPath }}" alt="Organisation logo">@endif</div>
+    <div class="header-cell" style="width:170px">@if($companyLogoPath)<table class="logo-frame"><tr><td><img src="{{ $companyLogoPath }}" width="{{ $logoWidth }}" height="{{ $logoHeight }}" alt="Organisation logo"></td></tr></table>@endif</div>
     <div class="header-cell"><h1>PURCHASE ORDER</h1></div>
     <div class="header-cell" style="text-align:right;width:190px">
         <div class="po-num">{{ $po->po_number }}</div>
-        <div style="font-size:10px;color:#94a3b8;margin-top:4px">Issued: {{ $po->created_at?->format('d M Y') ?? date('d M Y') }}</div>
+        <div style="font-size:10px;color:#6b7280;margin-top:4px">Issued: {{ $po->created_at?->format('d M Y') ?? date('d M Y') }}</div>
     </div>
 </div>
 
@@ -104,7 +105,7 @@
     @endif
 
     <div class="sig-box">
-        <div class="sig">Authorized Signatory<br><span style="color:#9ca3af">{{ $companyName }}</span></div>
+        <div class="sig">Authorized Signatory<br><span style="color:#9ca3af">System Approved PO</span></div>
         <div class="sig">Vendor Acknowledgment<br><span style="color:#9ca3af">Date: ____________________</span></div>
     </div>
 

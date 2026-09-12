@@ -41,7 +41,10 @@
                 </form>
                 @endif
                 @if($notif->link)
-                <a href="{{ route('notifications.mark-read', ['notification' => $notif->id, 'redirect' => 1]) }}" class="text-xs text-gray-500 hover:text-gray-700">View →</a>
+                <form method="POST" action="{{ route('notifications.mark-read', ['notification' => $notif->id, 'redirect' => 1]) }}">
+                    @csrf
+                    <button class="text-xs text-gray-500 hover:text-gray-700">View →</button>
+                </form>
                 @endif
             </div>
         </div>

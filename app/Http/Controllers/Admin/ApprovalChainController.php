@@ -20,8 +20,8 @@ class ApprovalChainController extends Controller
     public function index(): View
     {
         $chains    = ApprovalChain::with(['verifiers', 'approvers'])->latest()->get();
-        $verifierUsers = User::active()->withRole('verifier')->with('role')->orderBy('name')->get();
-        $approverUsers = User::active()->withRole('approver')->with('role')->orderBy('name')->get();
+        $verifierUsers = User::active()->withRole('verifier')->with(['role', 'roles'])->orderBy('name')->get();
+        $approverUsers = User::active()->withRole('approver')->with(['role', 'roles'])->orderBy('name')->get();
 
         $poApprovalChainId = Setting::get('purchase_order_approval_chain_id');
         $paymentChannels = PaymentAuthorisationChannel::with(['approvalChain', 'paymentAccount'])->orderBy('name')->get();

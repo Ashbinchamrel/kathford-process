@@ -62,7 +62,7 @@ class PurchaseOrder extends Model
         return $this->morphMany(ApprovalAction::class, 'actionable')->orderBy('acted_at');
     }
 
-    public function isEditable(): bool { return in_array($this->status, ['generated', 'rejected']); }
+    public function isEditable(): bool { return in_array($this->status, ['generated', 'rejected', 'draft']); }
     public function isPendingVerification(): bool { return $this->status === 'pending_verification'; }
     public function isPendingApproval(): bool { return $this->status === 'pending_approval'; }
     public function isApproved(): bool { return $this->status === 'approved'; }
