@@ -1,0 +1,427 @@
+{
+  "title": "KATHFORD STRATEGIC PRIORITIES 2026–2028",
+  "matrix": {
+    "starts_on": "2026-04-01",
+    "ends_on": "2028-03-31",
+    "semesters": [
+      {
+        "label": "April 2026–September 2026",
+        "starts_on": "2026-04-01",
+        "ends_on": "2026-09-30"
+      },
+      {
+        "label": "October 2026–March 2027",
+        "starts_on": "2026-10-01",
+        "ends_on": "2027-03-31"
+      },
+      {
+        "label": "April 2027–September 2027",
+        "starts_on": "2027-04-01",
+        "ends_on": "2027-09-30"
+      },
+      {
+        "label": "October 2027–March 2028",
+        "starts_on": "2027-10-01",
+        "ends_on": "2028-03-31"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "priority": "Academic Distinction through Kathford Learning Experience Model (KLEM)",
+      "goal": "Institutionalize KLEM as the Standard Learning Design Framework",
+      "strategy": "KLEM as a Pedagogical Overlay on TU Syllabi",
+      "targets": [
+        "100% AGS Plan, \n80% Canvas adoption, \n60% MVTO compliance, \n70% Student engagement in Canvas activities",
+        "100% AGS implementation, \n90% Canvas adoption, \n75% MVTO compliance, \n80% Student engagement in Canvas activities,\n75% active learning compliance",
+        "100% AGS implementation,                                         \n100% Canvas adoption, \n90% MVTO compliance, \n90% Student engagement in Canvas activities,\n90% active learning compliance",
+        "100% AGS implementation, \n100% Canvas adoption, \n100% MVTO compliance, \n100% Student engagement in Canvas activities,\n100% active learning compliance"
+      ]
+    },
+    {
+      "priority": "Academic Distinction through Kathford Learning Experience Model (KLEM)",
+      "goal": "Strengthen Foundational Competency and Exam Readines",
+      "strategy": "Continuous Feedback, Reflection, and Improvement",
+      "targets": [
+        "+20% TU pass rate improvement,\n100% Diagnostic tests completed,\n80% Remedial attendance",
+        "+40% pass rate improvement in engineering,  \n80% pass rate in management and IT",
+        "+50% pass rate improvement in engineering, \n90% pass rate in management and IT",
+        "+60% pass rate in engineering, \n+95% pass rate in IT and management"
+      ]
+    },
+    {
+      "priority": "Academic Distinction through Kathford Learning Experience Model (KLEM)",
+      "goal": "Integrate Professional, Innovation, and Life Skills into the Learning Experience",
+      "strategy": "Embedding Learning Beyond the Classroom",
+      "targets": [
+        "10 Professional microcredentials launched, \n5 Life and career skills microcredentials launched, \nOrganize Kathfest, BizBuzz, Hakathon",
+        "10 Professional microcredentials added,  \n5 Life and career skills microcredentials added",
+        "10 Professional microcredentials added, \n5 Life and career skills microcredentials added,\nOrganize Kathfest, BizBuzz, Hakathon",
+        "10 Professional microcredentials added,                                                                                     5 Life and career skills microcredentials added"
+      ]
+    },
+    {
+      "priority": "Academic Distinction through Kathford Learning Experience Model (KLEM)",
+      "goal": "Build Sustainable Faculty Capability for Student-Centric Teaching",
+      "strategy": "Structured Faculty Development for Active Learning & Technology Adaptation",
+      "targets": [
+        "50% of the faculty trained, \n80% teaching reflection survey,",
+        "70% of the faculty trained, \n100% teaching reflection survey, \n20% faculty use AI",
+        "90% of the faculty trained, \n60% of the faculty use AI, \n2 future leaders identified per department",
+        "100% faculty trained, \n70% of the faculty use AI, \n2 future leaders ready per department"
+      ]
+    },
+    {
+      "priority": "Academic Distinction through Kathford Learning Experience Model (KLEM)",
+      "goal": "Build Sustainability & Institutional Memory",
+      "strategy": "A) KLEM playbooks & toolkits\nB) Department-level pedagogy leads\nC) Annual faculty development budget",
+      "targets": [
+        "Embed KLEM in Faculty Induction SOPs, \nBuild Blended learning for Course design clinics, \nOperationalize Faculty Induction SOPs",
+        "Operationalize blended learning for Course design clinics,",
+        "",
+        ""
+      ]
+    },
+    {
+      "priority": "Student Success, Employability & Life Design",
+      "goal": "Achieve +80% students transitioning successfully into employment, entrepreneurship, higher education, or meaningful social impact, within 6 months of graduation.",
+      "strategy": "A. Student Success Intelligence System (Canvas-Enabled)",
+      "targets": [
+        "Employment/engagement of graduates tracked and recorded",
+        "Employment/engagement of graduates tracked and updated",
+        "Employment/engagement of graduates tracked and updated",
+        "Employment/engagement of graduates tracked and updated"
+      ]
+    },
+    {
+      "priority": "Student Success, Employability & Life Design",
+      "goal": "Ensure 100% students engage in structured KLEM pathways",
+      "strategy": "B. Industry-Embedded Learning",
+      "targets": [
+        "50% students mentored, \n5% students using counseling,\n+30% student engagement in microcredentials,     \n20% students participate in club activities",
+        "60% students mentored, \n5% students using counseling,\n+40% student engagement in microcredentials, \n25% students participate in club activities",
+        "70% students mentored, \n5% students using counseling,\n+60% student engagement in microcredentials, \n30% students participate in club activities",
+        "80% students mentored, \n5% students using counseling,\n+80% student engagement in microcredentials,                                                        40% students participate in club activities"
+      ]
+    },
+    {
+      "priority": "Student Success, Employability & Life Design",
+      "goal": "Reduce failure, dropout, and academic risk significantly",
+      "strategy": "C. Student Satisfaction Survey",
+      "targets": [
+        "+80% students participated in the survey,\n+70% student satisfaction score",
+        "+80% students participated in the survey,\n+75% student satisfaction score",
+        "+80% students participated in the survey,\n+80% student satisfaction score",
+        "+90% students participated in the survey,\n+90% student satisfaction score"
+      ]
+    },
+    {
+      "priority": "Student Success, Employability & Life Design",
+      "goal": "Institutionalize the Student Profile & Impact system- (digitally tracked)",
+      "strategy": "D. Life Design Integration",
+      "targets": [
+        "100% New enrolled fill out KYS form,                                                                                                         100% II & IV Sem students fill out KLEM form",
+        "100% New enrolled fill out KYS form,                            100% III& V Sem students update goals/KLEM form",
+        "100% II, IV& VI Sem students fill/update goals/KLEM form",
+        "100% III, V& VII Sem students update goals/KLEM form"
+      ]
+    },
+    {
+      "priority": "Industry Integration, Research & Innovation",
+      "goal": "Establish 50+ active industry partnerships.",
+      "strategy": "A) Industry Partnership Framework",
+      "targets": [
+        "20 active industry partners, \n10 MoUs signed,                                                                                                                                                                                                    \n5 co-designed training programs,    \nLaunch 3 research & innovation labs, \nOperationalize IPEF and IREF (8 papers escalated), \nBizBuzz, Hackathon, and Kathfest organized",
+        "35 active industry partners, \n20 MoUs signed,                     \n5 co-designed training programs,    \nEstablish the IPEF and IREF track, \n10 papers submitted",
+        "55 active industry partners, \n40 MoUs signed,                                                                     \n5 co-designed training programs,    \nEstablish the IPEF and IREF track,\n80 internship placements, \n10 papers submitted",
+        "75+ active industry partnerships, \n100% internship placement,                                      5 co-designed training programs,    \n10 papers submitted through IPEF/ IREF track"
+      ]
+    },
+    {
+      "priority": "Industry Integration, Research & Innovation",
+      "goal": "Establish Alumni Engagement",
+      "strategy": "B) Kathford Pariwar launch",
+      "targets": [
+        "Formalize Kathford Pariwar,\n10 alumni mentors identified",
+        "Embed alumni activities in calendar,\n10 alumni mentors identified",
+        "Embed alumni activities in calendar,\n10 alumni mentors identified,\nHonour Alumni in Kathford Day",
+        "Embed alumni activities in calendar,\n10 alumni mentors identified,\nHonour Alumni in Kathford Day"
+      ]
+    },
+    {
+      "priority": "Industry Integration, Research & Innovation",
+      "goal": "Launch applied research and innovation labs across disciplines.",
+      "strategy": "C)  Undergraduate Research & Innovation Track",
+      "targets": [
+        "Operationalize IoT and AI Lab programs",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "priority": "Industry Integration, Research & Innovation",
+      "goal": "Increase student projects, research, and applied outputs",
+      "strategy": "D) Institutional Project Excellence Framework,                                                                                                                                              Institutional Research Excellence Framework",
+      "targets": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "priority": "Industry Integration, Research & Innovation",
+      "goal": "Enable startup and consulting pathways",
+      "strategy": "E) Incubation & Entrepreneurship",
+      "targets": [
+        "",
+        "Ready Startup Incubation Framework                                                       Ready Consulting Framework",
+        "Ready Startup Incubation SOP                                                        Ready Ready Consulting SOP",
+        "Operationalize Startup Incubation Framework/SOP                                                       Operationalize Consulting Framework/SOP"
+      ]
+    },
+    {
+      "priority": "Faculty Excellence, Academic Leadership & Institutional Capability",
+      "goal": "100% faculty trained in KLEM, AGS planning, student-centered and active learning, and Canvas-enabled teaching",
+      "strategy": "A) Faculty Career Pathways",
+      "targets": [
+        "50% faculty training completion in the Integrated Learning System, IPEF, IREF",
+        "75% IPEF compliance, \n10 papers submitted, \n5 publication-ready student projects,                                                                        50% faculty training completion,                                                                                                                5 faculty microcredential courses launched, \n100% faculty survey completion,\n10 future academic leaders identified",
+        "90% IPEF compliance, \n20 papers submitted, \n1 Erasmus proposal submitted",
+        "100% IPEF compliance, \n2 research outputs per discipline, \n2 Erasmus proposals submitted"
+      ]
+    },
+    {
+      "priority": "Faculty Excellence, Academic Leadership & Institutional Capability",
+      "goal": "Establish clear faculty career pathways, including leadership roles (Academic, Research, Industry)",
+      "strategy": "B) Leadership Development Pathway",
+      "targets": [
+        "Ready KFLA Framework/SOP,                                                                                                                     Build Blended learning course design,                                                                                                                               5 faculty microcredential courses launched",
+        "Launch KFLA program",
+        "KFLA program conducted,                                               5 faculty microcredential courses launched",
+        "KFLA program conducted"
+      ]
+    },
+    {
+      "priority": "Faculty Excellence, Academic Leadership & Institutional Capability",
+      "goal": "Build an internal academic leadership pipeline",
+      "strategy": "C) Teaching Excellence Tracking (Canvas)",
+      "targets": [
+        "10 future academic leaders identified,                     Small cohort AGS plan workshop with the identified academic leaders",
+        "10 future academic leaders identified,                     Small cohort AGS plan workshop with the identified academic leaders",
+        "10 future academic leaders identified,                     Small cohort AGS plan workshop with the identified academic leaders",
+        "10 future academic leaders identified,                     Small cohort AGS plan workshop with the identified academic leaders"
+      ]
+    },
+    {
+      "priority": "Faculty Excellence, Academic Leadership & Institutional Capability",
+      "goal": "Improve faculty retention and engagement (>70%)",
+      "strategy": "D) Continuous Professional Development",
+      "targets": [
+        "+80% faculty survey completion,           +70% faculty satisfaction",
+        "+90% faculty survey completion,                                                                       +80% faculty satisfaction",
+        "+100% faculty survey completion,                                        +90% faculty satisfaction",
+        "+100% faculty survey completion,                                                              +90% faculty satisfaction"
+      ]
+    },
+    {
+      "priority": "Faculty Excellence, Academic Leadership & Institutional Capability",
+      "goal": "Increase faculty-led research and consulting outputs",
+      "strategy": "E) Research and Consulting Development",
+      "targets": [
+        "8 papers/proposals submitted approved",
+        "8 papers/proposals submitted approved",
+        "8 papers/proposals submitted approved",
+        "8 papers/proposals submitted approved"
+      ]
+    },
+    {
+      "priority": "Digital Transformation & Scalable Operating System",
+      "goal": "Integrate ERP, LMS, HR, Finance, and Analytics",
+      "strategy": "A) Digital College Operating System (Automation),",
+      "targets": [
+        "Student Dashboard 100%\nFaculty Dashbaord 100%\nCourse Dashboard 100%",
+        "Executive Dashboard 100%\n50% core administrative workflows digitized\n60% students service online",
+        "Student Master Data Integrated\n100% faculty data synchronized\nDuplicate data entry reduced by 70%\n80% institutional report auto generated",
+        "100% at risk students tracked\n90% strategic KPI available online"
+      ]
+    },
+    {
+      "priority": "Digital Transformation & Scalable Operating System",
+      "goal": "Automate 70%+ academic and administrative workflows",
+      "strategy": "B) Agile Governance",
+      "targets": [
+        "70% strategic initiatives captured in Jira/Project Tracker\nCMT Review Institutionalized",
+        "90% on-time completion of planned initiatives\nDepartment review meetings conducted monthly\nStrategic dashboard available to CMT",
+        "100% strategic priorities linked to measurable KPIs\nQuarterly KPI review completed on schedule\n80% management decisions supported by data",
+        "90% strategic initiatives completed or on track\nDecision-to-action cycle reduced by 50%"
+      ]
+    },
+    {
+      "priority": "Digital Transformation & Scalable Operating System",
+      "goal": "Enable real-time dashboards for facity, leadership and the Board",
+      "strategy": "C) Data-Driven Governance/Decisions",
+      "targets": [
+        "60% of key operational and academic data available through dashboard",
+        "90% data accuracy across major systems (Canvas, Pathshala, Zoho)\nDepartment-level dashboards operational\n50% reduction in manual report preparation",
+        "80% of CMT and departmental reviews use dashboard data",
+        "90% of strategic decisions supported by data analysis"
+      ]
+    },
+    {
+      "priority": "Digital Transformation & Scalable Operating System",
+      "goal": "Institutionalize OKR + Jira-based execution",
+      "strategy": "D) Bi-weekly Sprint",
+      "targets": [
+        "80% sprint tasks assigned with owner and deadline",
+        "75% sprint completion rate",
+        "85% sprint completion rate",
+        "90% sprint completion rate"
+      ]
+    },
+    {
+      "priority": "Financial Sustainability & Revenue Diversification",
+      "goal": "Maintain enrollment above 85% capacity",
+      "strategy": "A) Enrollment Excellence",
+      "targets": [
+        "+80% admissions attained, \nAdmission dashboard built,",
+        "+20% retention improved, \nPRT documentation underway,",
+        "+85% admissions attained, \nPRT completed,",
+        "+20% retention improved, \nPRT completed"
+      ]
+    },
+    {
+      "priority": "Financial Sustainability & Revenue Diversification",
+      "goal": "Generate 5% non-tuition revenue by 2028",
+      "strategy": "B) Revenue Diversification",
+      "targets": [
+        "",
+        "Blended learning courses design in IT, Management, and Engineering",
+        "Ready marketplace Courses",
+        "Marketplace catalogue live"
+      ]
+    },
+    {
+      "priority": "Financial Sustainability & Revenue Diversification",
+      "goal": "Improve cost efficiency through process optimization",
+      "strategy": "C) Cost Optimazation \nD) Payment Authorization SOPs",
+      "targets": [
+        "Unit cost Review",
+        "Unit cost Review",
+        "Unit cost Review",
+        "Unit cost Review"
+      ]
+    },
+    {
+      "priority": "Financial Sustainability & Revenue Diversification",
+      "goal": "",
+      "strategy": "",
+      "targets": [
+        "85% Fee Collection",
+        "90% Fee Collection",
+        "95% Fee Collection",
+        "95% Fee Collection"
+      ]
+    },
+    {
+      "priority": "Financial Sustainability & Revenue Diversification",
+      "goal": "Strengthen financial governance and transparency",
+      "strategy": "F) Power of One",
+      "targets": [
+        "Create Reserve/Operation Fund",
+        "Create Reserve/Operation Fund",
+        "Create Reserve/Operation Fund",
+        "Create Reserve/Operation Fund"
+      ]
+    },
+    {
+      "priority": "Brand, Accreditation, Reputation & Societal Impact",
+      "goal": "Strengthen Kathford’s brand visibility and differentiation",
+      "strategy": "A) Brand Narrative",
+      "targets": [
+        "Institutional brand narrative finalized and approved",
+        "100% leadership aligned on core messaging\n80% staff and faculty oriented\nBrand narrative integrated into admissions, website, and presentations",
+        "100% marketing and outreach materials aligned with brand narrative\nAlumni and industry stories incorporated into communications",
+        "Faculty, students, and alumni actively promoting brand narrative"
+      ]
+    },
+    {
+      "priority": "Brand, Accreditation, Reputation & Societal Impact",
+      "goal": "Position Kathford as an employer of choice in higher education",
+      "strategy": "B) Employer Brand",
+      "targets": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "priority": "Brand, Accreditation, Reputation & Societal Impact",
+      "goal": "Institutionalize community engagement and social impact",
+      "strategy": "C) Community & National Impact",
+      "targets": [
+        "Ready Kathford Sathi Blended learning course design",
+        "5 Kathford Sathi MoUs signed,                                       3 Teachers' Training & Students' projects completed",
+        "5 Kathford Sathi MoUs signed,                                       3 Teachers' Training & Students' projects completed",
+        "5 Kathford Sathi MoUs signed,                                       3 Teachers' Training & Students' projects completed"
+      ]
+    },
+    {
+      "priority": "Brand, Accreditation, Reputation & Societal Impact",
+      "goal": "Prepare for national and regional rankings and recognition",
+      "strategy": "D) QAA UGC",
+      "targets": [
+        "LOI Renewed",
+        "SSR Completed",
+        "PRT Visit completed",
+        "QAA received"
+      ]
+    },
+    {
+      "priority": "Physical Infrastructure & Learning Environment Transformation",
+      "goal": "Complete construction of Balkumari campus within 14 months",
+      "strategy": "A) Project Execution\nB) Learning-Centric Design",
+      "targets": [
+        "10% Balkumari milestone",
+        "75% Balkumari milestone",
+        "100% Balkumari milestone",
+        ""
+      ]
+    },
+    {
+      "priority": "Physical Infrastructure & Learning Environment Transformation",
+      "goal": "Build three integrated blocks: Administrative, Engineering, IT & Management",
+      "strategy": "",
+      "targets": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "priority": "Physical Infrastructure & Learning Environment Transformation",
+      "goal": "Design future-ready learning spaces: smart classrooms, advanced labs, computer center, library, seminar hall, conference halls, cafeteria, collaborative zones",
+      "strategy": "",
+      "targets": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "priority": "Physical Infrastructure & Learning Environment Transformation",
+      "goal": "Transition from fragmented leased spaces → unified campus ecosystem",
+      "strategy": "C) Governance",
+      "targets": [
+        "Monthly review system active",
+        "Monthly review system active",
+        "Monthly review system active",
+        ""
+      ]
+    }
+  ]
+}

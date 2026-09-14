@@ -266,8 +266,27 @@ class PaymentController extends Controller
     {
         $this->authorizeFinance();
 
-        $payment->load(['purchaseOrder.vendor', 'vendor', 'markedPaidBy', 'schedules.paymentAccount']);
+        $payment->load(['purchaseOrder.vendor', 'purchaseOrder.rfqQuote.rfq.activityForm', 'activityForm', 'vendor', 'markedPaidBy', 'schedules.paymentAccount']);
         return view('payments.show', compact('payment'));
+    }
+
+    /** Anyone with Payment Schedule access can pull the Activity Form behind any payment they can see. */
+    public function activityFormPdf(Payment $payment): \Illuminate\Http\Response
+    {
+        $this->authorizeFinance();
+
+        $payment->load(['activityForm', 'purchaseOrder.rfqQuote.rfq.activityForm']);
+        $form = $payment->activityForm ?: $payment->purchaseOrder?->rfqQuote?->rfq?->activityForm;
+        abort_unless($form, 404);
+
+        $form->load(['category', 'creator', 'department', 'budget', 'verifier', 'approver', 'approvalActions.actor', 'lineItems.vendor']);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView(
+            'activity-forms.pdf',
+            array_merge(['form' => $form], \App\Support\DocumentBranding::data()),
+        )->setPaper('a4', 'portrait');
+
+        return $pdf->download("{$form->form_number}.pdf");
     }
 
     public function edit(Payment $payment): View

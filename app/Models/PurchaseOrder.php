@@ -15,7 +15,7 @@ class PurchaseOrder extends Model
     use HasUuids, SoftDeletes;
 
     protected $fillable = [
-        'po_number', 'purchase_request_id', 'rfq_quote_id', 'vendor_id',
+        'po_number', 'title', 'purchase_request_id', 'rfq_quote_id', 'budget_id', 'vendor_id',
         'generated_by', 'approval_chain_id', 'delivery_address', 'expected_delivery_date',
         'terms_and_conditions', 'subtotal', 'tax_applied', 'tax_rate', 'tax_amount', 'total_amount',
         'status', 'sent_to_vendor_at', 'authorised_by_name', 'authorised_at',
@@ -41,6 +41,7 @@ class PurchaseOrder extends Model
 
     public function purchaseRequest(): BelongsTo { return $this->belongsTo(PurchaseRequest::class); }
     public function rfqQuote(): BelongsTo { return $this->belongsTo(RfqQuote::class); }
+    public function budget(): BelongsTo { return $this->belongsTo(DepartmentBudget::class, 'budget_id'); }
     public function vendor(): BelongsTo { return $this->belongsTo(Vendor::class); }
     public function generatedBy(): BelongsTo { return $this->belongsTo(User::class, 'generated_by'); }
     public function approvalChain(): BelongsTo { return $this->belongsTo(ApprovalChain::class); }

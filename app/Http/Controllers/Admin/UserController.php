@@ -21,9 +21,9 @@ class UserController extends Controller
         $query = User::with(['role', 'roles', 'department'])->latest();
 
         if ($request->search) {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('email', 'like', "%{$request->search}%");
+                    ->orWhere('email', 'like', "%{$request->search}%");
             });
         }
         if ($request->role_id) {
@@ -41,8 +41,9 @@ class UserController extends Controller
 
     public function create(): View
     {
-        $roles       = Role::orderBy('display_name')->get();
+        $roles = Role::orderBy('display_name')->get();
         $departments = Department::where('is_active', true)->orderBy('name')->get();
+
         return view('admin.users.create', compact('roles', 'departments'));
     }
 
@@ -51,39 +52,43 @@ class UserController extends Controller
         $domain = config('kathford.allowed_email_domain', 'kathford.edu.np');
 
         $request->validate([
-            'name'          => ['required', 'string', 'max:255'],
-            'email'         => [
+            'is_board_member' => ['sometimes', 'boolean'],
+            'is_cmt_member' => ['sometimes', 'boolean'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
                 'required', 'email', 'unique:users,email',
                 function ($attribute, $value, $fail) use ($domain) {
-                    if (! str_ends_with(strtolower($value), '@' . strtolower($domain))) {
+                    if (! str_ends_with(strtolower($value), '@'.strtolower($domain))) {
                         $fail("Email must be from the {$domain} domain.");
                     }
                 },
             ],
-            'roles'         => ['required', 'array', 'min:1'],
-            'roles.*'       => ['distinct', 'exists:roles,id'],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => ['distinct', 'exists:roles,id'],
             'department_id' => ['nullable', 'exists:departments,id'],
-            'phone'         => ['nullable', 'string', 'max:20'],
-            'designation'   => ['nullable', 'string', 'max:100'],
-            'password'      => ['required', 'string', 'min:12', 'confirmed'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'designation' => ['nullable', 'string', 'max:100'],
+            'password' => ['required', 'string', 'min:12', 'confirmed'],
         ]);
 
         if ($error = $this->invalidRoleSelection($request->roles)) {
             return back()->withErrors(['roles' => $error])->withInput();
         }
 
-        $primaryRoleId     = $request->roles[0];
+        $primaryRoleId = $request->roles[0];
         $additionalRoleIds = array_slice($request->roles, 1);
 
         $user = User::create([
-            'name'          => $request->name,
-            'email'         => $request->email,
-            'role_id'       => $primaryRoleId,
+            'is_board_member' => $request->boolean('is_board_member'),
+            'is_cmt_member' => $request->boolean('is_cmt_member'),
+            'name' => $request->name,
+            'email' => $request->email,
+            'role_id' => $primaryRoleId,
             'department_id' => $request->department_id,
-            'phone'         => $request->phone,
-            'designation'   => $request->designation,
-            'password'      => Hash::make($request->password),
-            'is_active'     => true,
+            'phone' => $request->phone,
+            'designation' => $request->designation,
+            'password' => Hash::make($request->password),
+            'is_active' => true,
         ]);
         $user->roles()->sync($additionalRoleIds);
 
@@ -95,22 +100,25 @@ class UserController extends Controller
 
     public function edit(User $user): View
     {
-        $roles       = Role::orderBy('display_name')->get();
+        $roles = Role::orderBy('display_name')->get();
         $departments = Department::where('is_active', true)->orderBy('name')->get();
+
         return view('admin.users.edit', compact('user', 'roles', 'departments'));
     }
 
     public function update(Request $request, User $user): RedirectResponse
     {
         $request->validate([
-            'name'          => ['required', 'string', 'max:255'],
-            'roles'         => ['required', 'array', 'min:1'],
-            'roles.*'       => ['distinct', 'exists:roles,id'],
+            'is_board_member' => ['sometimes', 'boolean'],
+            'is_cmt_member' => ['sometimes', 'boolean'],
+            'name' => ['required', 'string', 'max:255'],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => ['distinct', 'exists:roles,id'],
             'department_id' => ['nullable', 'exists:departments,id'],
-            'phone'         => ['nullable', 'string', 'max:20'],
-            'designation'   => ['nullable', 'string', 'max:100'],
-            'is_active'     => ['boolean'],
-            'password'      => ['nullable', 'string', 'min:12', 'confirmed'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'designation' => ['nullable', 'string', 'max:100'],
+            'is_active' => ['boolean'],
+            'password' => ['nullable', 'string', 'min:12', 'confirmed'],
         ]);
 
         // Prevent disabling yourself
@@ -123,26 +131,28 @@ class UserController extends Controller
         }
 
         $superAdminRoleId = Role::where('name', 'super_admin')->value('id');
-        $keepsSuperAdmin   = $superAdminRoleId && in_array($superAdminRoleId, $request->roles, true);
+        $keepsSuperAdmin = $superAdminRoleId && in_array($superAdminRoleId, $request->roles, true);
         if ($user->isSuperAdmin() && ! $keepsSuperAdmin && User::withRole('super_admin')->count() <= 1) {
             return back()->withErrors(['roles' => 'The last Super Admin account must keep the Super Admin role. Assign another Super Admin first.']);
         }
 
         $old = array_merge(
-            $user->only(['name', 'role_id', 'is_active']),
+            $user->only(['name', 'role_id', 'is_active', 'is_board_member', 'is_cmt_member']),
             ['roles' => $user->allRoles()->pluck('name')->all()],
         );
 
-        $primaryRoleId     = $request->roles[0];
+        $primaryRoleId = $request->roles[0];
         $additionalRoleIds = array_slice($request->roles, 1);
 
         $changes = [
-            'name'          => $request->name,
-            'role_id'       => $primaryRoleId,
+            'is_board_member' => $request->has('is_board_member') ? $request->boolean('is_board_member') : $user->is_board_member,
+            'is_cmt_member' => $request->has('is_cmt_member') ? $request->boolean('is_cmt_member') : $user->is_cmt_member,
+            'name' => $request->name,
+            'role_id' => $primaryRoleId,
             'department_id' => $request->department_id,
-            'phone'         => $request->phone,
-            'designation'   => $request->designation,
-            'is_active'     => $request->boolean('is_active'),
+            'phone' => $request->phone,
+            'designation' => $request->designation,
+            'is_active' => $request->boolean('is_active'),
         ];
 
         if ($request->filled('password')) {
@@ -153,7 +163,7 @@ class UserController extends Controller
         $user->roles()->sync($additionalRoleIds);
 
         $new = array_merge(
-            $user->only(['name', 'role_id', 'is_active']),
+            $user->only(['name', 'role_id', 'is_active', 'is_board_member', 'is_cmt_member']),
             ['roles' => $user->fresh()->allRoles()->pluck('name')->all()],
         );
 
@@ -169,9 +179,9 @@ class UserController extends Controller
     public function reset2fa(User $user): RedirectResponse
     {
         $user->update([
-            'two_factor_secret'        => null,
-            'two_factor_recovery_codes'=> null,
-            'two_factor_confirmed_at'  => null,
+            'two_factor_secret' => null,
+            'two_factor_recovery_codes' => null,
+            'two_factor_confirmed_at' => null,
         ]);
         TwoFactorTrust::forget($user);
 

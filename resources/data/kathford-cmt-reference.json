@@ -1,0 +1,287 @@
+{
+  "title": "CMT Goals · April–September 2026",
+  "theme": "Strengthening Academic Execution, Student Success, and Institutional Scale",
+  "monthly_plan": "April 2026\nSemester kickoff\nAGS drafting begins\nCanvas shells created\nFaculty training starts\nKYS update launched\nMay 2026\nDiagnostics and pass-rate review\nMentorship and counseling rollout\nSchool outreach campaigns begin\nAlumni database preparation\nJune 2026\nRemedial classes start\nClub activities active\nCanvas analytics review\nResearch lab planning complete\nJuly 2026\nKathfest preparation\nInternship and placement push\nFaculty peer observations\nAdmissions conversion campaigns\nAugust 2026\nMock exams and pass-rate interventions\nAlumni events\nResearch lab launch\nConstruction milestone review\nSeptember 2026\nSemester retrospective\nKPI review\nBoard report preparation\nNext-semester planning",
+  "groups": [
+    {
+      "title": "Ensure all programs begin operating with structured AGS plans, MVTO expectations, Canvas adoption, and active learning practices.",
+      "results": [
+        {
+          "title": "100% AGS completion",
+          "metric": "%",
+          "target": "100",
+          "baseline": ""
+        },
+        {
+          "title": "80% Canvas course readiness",
+          "metric": "%",
+          "target": "80",
+          "baseline": ""
+        },
+        {
+          "title": "60% MVTO implementation",
+          "metric": "%",
+          "target": "60",
+          "baseline": ""
+        },
+        {
+          "title": "50% faculty trained in Canvas + Active Learning",
+          "metric": "%",
+          "target": "50",
+          "baseline": ""
+        },
+        {
+          "title": "70% student participation in Canvas activities",
+          "metric": "%",
+          "target": "70",
+          "baseline": ""
+        }
+      ],
+      "deliverables": "AGS Plan drafted for 100% courses\nCanvas shells live for 80% courses\n60% courses using SpeedGrader and assignments\nStandard AGS + Canvas template used across departments\nFaculty induction on KLEM, MVTO, and Canvas completed",
+      "definition_of_done": "Course shell created\nAGS uploaded\nLearning outcomes visible\nAssignments configured\nFaculty trained\nStudents enrolled",
+      "proposed_tasks": "Create AGS templates for all programs\nMap AGS into the Canvas course structure\nCreate a standardized Canvas course template\nFaculty training on Canvas, SpeedGrader, quizzes, and discussions\nConduct AGS + MVTO audit by HoDs",
+      "milestones": "",
+      "target_note": "",
+      "due_on": "2026-09-30"
+    },
+    {
+      "title": "Build a structured exam-success system focused on engineering and low-performing courses.",
+      "results": [
+        {
+          "title": "+20% improvement in pass rate",
+          "metric": "%",
+          "target": "20",
+          "baseline": ""
+        },
+        {
+          "title": "100% departments conduct diagnostics",
+          "metric": "%",
+          "target": "100",
+          "baseline": ""
+        },
+        {
+          "title": "100% at-risk students identified",
+          "metric": "%",
+          "target": "100",
+          "baseline": ""
+        },
+        {
+          "title": "80% remedial attendance among targeted students",
+          "metric": "%",
+          "target": "80",
+          "baseline": ""
+        }
+      ],
+      "deliverables": "Early diagnostic tests by Week 4\nList of at-risk students by Week 5\nRemedial and coaching classes launched\nExam readiness workshops completed\nDepartment-level pass rate review meetings are held monthly",
+      "definition_of_done": "Diagnostic tests completed\nAt-risk students identified\nRemedial calendar published\nMock exam conducted\nMonthly performance review documented",
+      "proposed_tasks": "Identify high-failure subjects\nConduct diagnostic tests\nBuild at-risk student list\nRun remedial classes and coaching sessions\nDevelop answer-writing workshops and mock exams\nMentor review for at-risk students",
+      "milestones": "",
+      "target_note": "",
+      "due_on": "2026-09-30"
+    },
+    {
+      "title": "Strengthen faculty capability in active learning, Canvas, assessment, and academic leadership.",
+      "results": [
+        {
+          "title": "50% faculty trained",
+          "metric": "%",
+          "target": "50",
+          "baseline": ""
+        },
+        {
+          "title": "100% departments conduct peer observations",
+          "metric": "%",
+          "target": "100",
+          "baseline": ""
+        },
+        {
+          "title": "10 high-potential faculty identified for leadership pipeline",
+          "metric": "count",
+          "target": "10",
+          "baseline": ""
+        }
+      ],
+      "deliverables": "50% faculty complete Level 1 Active Learning training\n50% faculty complete Canvas certification\nDepartment-level peer observation system launched\nLeadership pathway identified for high-potential faculty",
+      "definition_of_done": "Faculty attendance recorded\nTraining resources uploaded\nObservation reports completed\nLeadership candidates documented",
+      "proposed_tasks": "Launch KFLA semester calendar\nRun Canvas clinics\nRun active learning workshops\nConduct peer observation cycles\nIdentify future HoDs / academic leaders",
+      "milestones": "",
+      "target_note": "",
+      "due_on": "2026-09-30"
+    },
+    {
+      "title": "Increase student engagement, mentorship participation, and mental health support.",
+      "results": [
+        {
+          "title": "+20% student engagement",
+          "metric": "%",
+          "target": "20",
+          "baseline": ""
+        },
+        {
+          "title": "100% students assigned mentors",
+          "metric": "%",
+          "target": "100",
+          "baseline": ""
+        },
+        {
+          "title": "100% students have updated KYS profile",
+          "metric": "%",
+          "target": "100",
+          "baseline": ""
+        },
+        {
+          "title": "Minimum 2 club activities per club",
+          "metric": "count",
+          "target": "2",
+          "baseline": ""
+        },
+        {
+          "title": "50 counseling cases supported",
+          "metric": "count",
+          "target": "50",
+          "baseline": ""
+        }
+      ],
+      "deliverables": "Mentorship program relaunched\nKnow Your Student (KYS) profile updated\nStudent Support Unit operational\nMental health counseling system launched\nStudent clubs complete semester activity plans",
+      "definition_of_done": "Mentor assigned\nKYS updated\nStudent meeting recorded\nClub event completed\nCounseling system active",
+      "proposed_tasks": "Update KYS form\nAssign mentors\nConduct mentor meetings\nLaunch the counseling process\nDevelop club calendar\nTrack student participation",
+      "milestones": "",
+      "target_note": "Confirm the measure: students assigned mentors and students mentored are different outcomes.",
+      "due_on": "2026-09-30"
+    },
+    {
+      "title": "Strengthen employability pathways through internships, placements, and alumni engagement.",
+      "results": [
+        {
+          "title": "100 internship placements",
+          "metric": "",
+          "target": "",
+          "baseline": ""
+        },
+        {
+          "title": "3 alumni engagement activities",
+          "metric": "count",
+          "target": "3",
+          "baseline": ""
+        },
+        {
+          "title": "200 alumni records updated",
+          "metric": "count",
+          "target": "200",
+          "baseline": ""
+        },
+        {
+          "title": "20 alumni mentors identified",
+          "metric": "count",
+          "target": "20",
+          "baseline": ""
+        }
+      ],
+      "deliverables": "Internship process launched for senior students\nPlacement tracking dashboard established\nKathford Pariwar alumni network launched\nMinimum 3 alumni events conducted",
+      "definition_of_done": "Internship partners confirmed\nAlumni platform launched\nPlacement tracking active\nMentoring events completed",
+      "proposed_tasks": "Build employer database\nRun internship readiness workshops\nCreate alumni database\nLaunch Kathford Pariwar\nOrganize alumni mentoring sessions",
+      "milestones": "",
+      "target_note": "Confirm internship measure: the summary says 100% placements; the detailed KPI says 100 placements. The strategy reference also specifies 10 alumni mentors; this CMT draft specifies 20.",
+      "due_on": "2026-09-30"
+    },
+    {
+      "title": "Build a visible research and innovation culture across all departments.",
+      "results": [
+        {
+          "title": "3 labs launched",
+          "metric": "count",
+          "target": "3",
+          "baseline": ""
+        },
+        {
+          "title": "1 Kathfest conducted",
+          "metric": "count",
+          "target": "1",
+          "baseline": ""
+        },
+        {
+          "title": "20 student projects showcased",
+          "metric": "count",
+          "target": "20",
+          "baseline": ""
+        },
+        {
+          "title": "10 faculty/student papers submitted",
+          "metric": "count",
+          "target": "10",
+          "baseline": ""
+        }
+      ],
+      "deliverables": "Launch 3 Research & Innovation Labs\nConduct Kathfest\nLaunch student research grant scheme\nIncrease conference and journal participation",
+      "definition_of_done": "Labs launched\nEvent completed\nProjects documented\nResearch submissions tracked",
+      "proposed_tasks": "Define research lab themes\nAllocate lab coordinators\nAnnounce research grant process\nConduct Kathfest planning\nInvite industry judges and mentors",
+      "milestones": "",
+      "target_note": "",
+      "due_on": "2026-09-30"
+    },
+    {
+      "title": "Strengthen admissions pipeline, school outreach, and brand visibility.",
+      "results": [
+        {
+          "title": "+25% admissions growth",
+          "metric": "%",
+          "target": "25",
+          "baseline": ""
+        },
+        {
+          "title": "50 school visits",
+          "metric": "count",
+          "target": "50",
+          "baseline": ""
+        },
+        {
+          "title": "12 webinars / events",
+          "metric": "count",
+          "target": "12",
+          "baseline": ""
+        },
+        {
+          "title": "90% lead follow-up within 24 hours",
+          "metric": "%",
+          "target": "90",
+          "baseline": ""
+        }
+      ],
+      "deliverables": "+25% admissions growth target\nKathford Sathi school engagement calendar launched\nProgram-specific campaigns activated\nParent engagement strengthened",
+      "definition_of_done": "School visits completed\nLeads entered into CRM\nEvents conducted\nConversion reports published",
+      "proposed_tasks": "School outreach plan\nAdmissions funnel dashboard\nParent communication process\nDigital marketing campaigns\nOpen house events",
+      "milestones": "",
+      "target_note": "",
+      "due_on": "2026-09-30"
+    },
+    {
+      "title": "Ensure institutional readiness for QAA / accreditation while maintaining momentum on the Balkumari project.",
+      "results": [
+        {
+          "title": "100% accreditation documents mapped",
+          "metric": "%",
+          "target": "100",
+          "baseline": ""
+        },
+        {
+          "title": "10% construction milestone achieved",
+          "metric": "%",
+          "target": "10",
+          "baseline": ""
+        },
+        {
+          "title": "Monthly project review meetings completed",
+          "metric": "count",
+          "target": "",
+          "baseline": ""
+        }
+      ],
+      "deliverables": "Accreditation evidence dashboard created\nDocumentation ownership assigned\n10% campus milestone achieved\nContractor and approval tracking system operational",
+      "definition_of_done": "Evidence matrix complete\nApprovals documented\nProject progress updated monthly\nConstruction milestone achieved",
+      "proposed_tasks": "Map accreditation evidence requirements\nAssign documentation owners\nReview campus project timeline\nTrack municipal approvals\nConduct monthly construction review meetings",
+      "milestones": "",
+      "target_note": "",
+      "due_on": "2026-09-30"
+    }
+  ]
+}

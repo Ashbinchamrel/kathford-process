@@ -6,6 +6,7 @@
 <div class="max-w-2xl space-y-5">
     @php
         $hasScheduleRows = ! $payment->parent_payment_id && $payment->schedules->isNotEmpty();
+        $relatedActivityForm = $payment->activityForm ?: $payment->purchaseOrder?->rfqQuote?->rfq?->activityForm;
     @endphp
     <div class="bg-white rounded-xl border border-gray-200 p-6">
         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
@@ -104,6 +105,9 @@
                 <button onclick="document.getElementById('mark-paid-modal').classList.remove('hidden')" class="px-5 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-semibold">Mark as Paid</button>
             @endif
         @endcan
+        @if($relatedActivityForm)
+<a href="{{ route('payments.activity-form.pdf', $payment) }}" target="_blank" class="btn-secondary">Download Activity Form PDF</a>
+        @endif
         @can('payments.view')
 <a href="{{ route('payments.index') }}" class="text-gray-500 hover:text-gray-700 text-sm py-2">← Back</a>
 @endcan

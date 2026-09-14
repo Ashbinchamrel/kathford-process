@@ -1,6 +1,15 @@
 <?php
-namespace App\Models\Planning;
-class Sprint extends \Illuminate\Database\Eloquent\Model { use \Illuminate\Database\Eloquent\Concerns\HasUuids;
-protected $table="planning_sprints"; protected $guarded=[];
 
+namespace App\Models\Planning;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+
+class Sprint extends Model
+{
+    use HasUuids;
+
+    protected $table = 'planning_sprints';
+
+    protected $guarded = [];
 }

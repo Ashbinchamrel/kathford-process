@@ -39,7 +39,29 @@
 
         <section x-show="source === 'manual'" x-cloak class="rounded-xl border border-gray-200 bg-white p-6">
             <div class="flex items-center justify-between"><h2 class="text-base font-semibold text-gray-800">2. Manual vendor and items</h2><button type="button" @click="addManualItem()" class="text-sm font-semibold text-teal-700">+ Add item</button></div>
-            <div class="mt-4"><label class="mb-1 block text-sm font-medium text-gray-700">Vendor</label><select name="vendor_id" :disabled="source !== 'manual'" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"><option value="">— Select vendor —</option>@foreach($vendors as $vendor)<option value="{{ $vendor->id }}" {{ old('vendor_id') === $vendor->id ? 'selected' : '' }}>{{ $vendor->name }}</option>@endforeach</select></div>
+            <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                    <label class="mb-1 block text-sm font-medium text-gray-700">Title / Subject <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" :required="source === 'manual'" :disabled="source !== 'manual'" value="{{ old('title') }}" placeholder="e.g. Office furniture for new wing" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                    @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="mb-1 block text-sm font-medium text-gray-700">Vendor</label>
+                    <select name="vendor_id" :disabled="source !== 'manual'" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"><option value="">— Select vendor —</option>@foreach($vendors as $vendor)<option value="{{ $vendor->id }}" {{ old('vendor_id') === $vendor->id ? 'selected' : '' }}>{{ $vendor->name }}</option>@endforeach</select>
+                </div>
+                <div>
+                    <label for="po-budget-search" class="mb-1 block text-sm font-medium text-gray-700">Budget <span class="text-red-500">*</span></label>
+                    <input id="po-budget-search" type="search" x-show="source === 'manual'" x-model="budgetSearch" placeholder="Search budget title or fiscal year…" class="w-full mb-2 rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                    <select name="budget_id" x-model="budgetId" :required="source === 'manual'" :disabled="source !== 'manual'" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                        <option value="">— Select an allocated budget —</option>
+                        <template x-for="budget in filteredBudgets" :key="budget.id">
+                            <option :value="budget.id" x-text="`${budget.department_name ? budget.department_name + ' — ' : ''}${budget.title} — FY ${budget.fiscal_year} (Remaining: ${formatMoney(budget.remaining)})`"></option>
+                        </template>
+                    </select>
+                    @error('budget_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <p class="mt-1 text-xs text-amber-700" x-show="source === 'manual' && isOverBudget()">This PO's amount is above the selected budget's remaining balance. You may still save — Finance will see the variance.</p>
+                </div>
+            </div>
             <div class="mt-4 overflow-x-auto"><div class="mb-2 grid min-w-[760px] grid-cols-12 gap-2 px-1 text-xs font-semibold uppercase text-gray-500"><div class="col-span-3">Description</div><div class="col-span-2">Qty</div><div class="col-span-2">Unit</div><div class="col-span-2">Rate (Rs)</div><div class="col-span-2 text-right">Amount (Rs)</div></div><div class="min-w-[760px] space-y-2"><template x-for="(item, index) in manualItems" :key="item.key"><div class="grid grid-cols-12 gap-2 item-row"><div class="col-span-3"><input :required="source === 'manual'" :disabled="source !== 'manual'" :name="`items[${index}][description]`" x-model="item.description" placeholder="Item description" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></div><div class="col-span-2"><input :required="source === 'manual'" :disabled="source !== 'manual'" type="number" min="0.01" step="0.01" :name="`items[${index}][quantity]`" x-model.number="item.quantity" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></div><div class="col-span-2"><input :disabled="source !== 'manual'" :name="`items[${index}][unit]`" x-model="item.unit" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></div><div class="col-span-2"><input :required="source === 'manual'" :disabled="source !== 'manual'" type="number" min="0" step="0.01" :name="`items[${index}][unit_rate]`" x-model.number="item.unit_rate" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></div><div class="col-span-2 flex items-center justify-end px-2 font-mono text-sm font-semibold text-gray-800" x-text="formatMoney((Number(item.quantity) || 0) * (Number(item.unit_rate) || 0))"></div><div class="col-span-1 pt-2 text-center"><button type="button" @click="removeManualItem(index)" class="text-red-500">×</button></div>
 <div class="col-span-12 rounded-lg bg-teal-50 px-3 py-2 text-sm text-teal-900" x-show="lowestRates(item).length" x-cloak>
     <p class="font-semibold">Lowest approved rate matching this item name</p>
@@ -72,6 +94,11 @@ function purchaseOrderBuilder() {
     const initialItems = @json(old('items', []));
     return {
         approvedRates: @js($approvedRates),
+        budgets: @js($budgetOptions),
+        budgetId: @json(old('budget_id', '')),
+        budgetSearch: '',
+        get filteredBudgets() { return this.budgets.filter(b => b.id === this.budgetId || `${b.title} ${b.fiscal_year} ${b.department_name || ''}`.toLowerCase().includes(this.budgetSearch.trim().toLowerCase())); },
+        isOverBudget() { const budget = this.budgets.find(b => b.id === this.budgetId); return !!budget && this.totalAmount() > Number(budget.remaining || 0) + 0.009; },
         normalize(value) { return String(value || '').trim().replace(/\s+/g, ' ').toLowerCase(); },
         lowestRates(item) {
             const name = this.normalize(item.description);

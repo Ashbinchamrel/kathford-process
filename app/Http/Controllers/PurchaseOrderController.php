@@ -68,7 +68,23 @@ class PurchaseOrderController extends Controller
                 'specification' => $rate->specification,
                 'valid_until' => $rate->valid_until->format('d M Y'),
             ]);
-        return view('purchase-orders.create', compact('vendors', 'awardedQuotes', 'selectedQuote', 'purchaseOrderChain', 'approvedRates'));
+        $budgetOptions = $this->budgetOptions();
+        return view('purchase-orders.create', compact('vendors', 'awardedQuotes', 'selectedQuote', 'purchaseOrderChain', 'approvedRates', 'budgetOptions'));
+    }
+
+    /** Active department budgets with live reserved/remaining figures, for the standalone-PO budget picker. */
+    private function budgetOptions(?PurchaseOrder $excluding = null): \Illuminate\Support\Collection
+    {
+        return \App\Models\DepartmentBudget::active()->with('department')->orderBy('activity_title')->get()
+            ->map(fn (\App\Models\DepartmentBudget $budget) => [
+                'id' => $budget->id,
+                'title' => $budget->activity_title,
+                'department_name' => $budget->department?->name,
+                'fiscal_year' => $budget->fiscal_year,
+                'allocated' => (float) $budget->allocated_amount,
+                'reserved' => $budget->reservedAmount(null, $excluding?->id),
+                'remaining' => $budget->remainingAmount(null, $excluding?->id),
+            ])->values();
     }
 
     public function store(Request $request): RedirectResponse
@@ -82,6 +98,8 @@ class PurchaseOrderController extends Controller
         $request->validate([
             'vendor_id'           => ['required', 'exists:vendors,id'],
             'rfq_quote_id'        => ['nullable', 'exists:rfq_quotes,id'],
+            'title'               => ['required_without:rfq_quote_id', 'nullable', 'string', 'max:255'],
+            'budget_id'           => ['required_without:rfq_quote_id', 'nullable', 'exists:department_budgets,id'],
             'delivery_address'    => ['required', 'string', 'max:2000'],
             'expected_delivery_date' => ['required', 'date', 'after_or_equal:today'],
             'terms_and_conditions'   => ['required', 'string', 'max:5000'],
@@ -111,6 +129,8 @@ class PurchaseOrderController extends Controller
 
             $po = PurchaseOrder::create([
                 'po_number'              => $this->nextPoNumber(),
+                'title'                  => $quote ? null : $request->title,
+                'budget_id'              => $quote ? null : $request->budget_id,
                 'vendor_id'              => $request->vendor_id,
                 'purchase_request_id'    => null,
                 'rfq_quote_id'           => $quote?->id,
@@ -190,7 +210,7 @@ class PurchaseOrderController extends Controller
     {
         $this->authorize('view', $purchaseOrder);
         $purchaseOrder->load([
-            'vendor', 'purchaseRequest.lineItems', 'rfqQuote.rfq', 'generatedBy',
+            'vendor', 'purchaseRequest.lineItems', 'rfqQuote.rfq', 'generatedBy', 'budget.department',
             'approvalChain.verifiers', 'approvalChain.approvers', 'verifier', 'approver', 'approvalActions.actor',
             'items.rfqQuoteItem', 'goodsReceived', 'payments', 'vendorBills.vendor', 'procurementChecklists.vendorBill',
         ]);
@@ -204,7 +224,8 @@ class PurchaseOrderController extends Controller
         abort_unless($purchaseOrder->isEditable(), 403, 'Only generated or returned POs can be edited.');
         $vendors = Vendor::where('is_active', true)->orderBy('name')->get();
         $purchaseOrder->load(['items', 'vendor']);
-        return view('purchase-orders.edit', compact('purchaseOrder', 'vendors'));
+        $budgetOptions = $this->budgetOptions($purchaseOrder);
+        return view('purchase-orders.edit', compact('purchaseOrder', 'vendors', 'budgetOptions'));
     }
 
     public function update(Request $request, PurchaseOrder $purchaseOrder): RedirectResponse
@@ -213,6 +234,8 @@ class PurchaseOrderController extends Controller
         abort_unless($purchaseOrder->isEditable(), 403, 'Only generated or returned POs can be edited.');
 
         $request->validate([
+            'title'                  => [\Illuminate\Validation\Rule::requiredIf(! $purchaseOrder->rfq_quote_id), 'nullable', 'string', 'max:255'],
+            'budget_id'              => [\Illuminate\Validation\Rule::requiredIf(! $purchaseOrder->rfq_quote_id), 'nullable', 'exists:department_budgets,id'],
             'delivery_address'       => ['required', 'string', 'max:2000'],
             'expected_delivery_date' => ['required', 'date'],
             'terms_and_conditions'   => ['required', 'string', 'max:5000'],
@@ -235,6 +258,10 @@ class PurchaseOrderController extends Controller
                 'terms_and_conditions'   => $request->terms_and_conditions,
                 'tax_applied'            => $taxApplied,
                 'tax_rate'               => $taxRate,
+                ...(! $purchaseOrder->rfq_quote_id ? [
+                    'title'     => $request->title,
+                    'budget_id' => $request->budget_id,
+                ] : []),
             ]);
 
             // If standalone PO (no RFQ quote), allow editing items
@@ -302,7 +329,11 @@ class PurchaseOrderController extends Controller
     /** Shared guard for the vendor-bill view/download endpoints: [disk_path, name, headers]. */
     private function resolveVendorBillFile(PurchaseOrder $purchaseOrder, VendorBill $vendorBill): array
     {
-        $this->authorize('view', $purchaseOrder);
+        // Anyone who can work a checklist can pull the bill it's attached to,
+        // regardless of whether they created/chain-approved the underlying PO.
+        if (! Auth::user()->can('checklists.view')) {
+            $this->authorize('view', $purchaseOrder);
+        }
         abort_unless($vendorBill->purchase_order_id === $purchaseOrder->id, 404);
         abort_unless(Storage::disk('private')->exists($vendorBill->disk_path), 404);
 

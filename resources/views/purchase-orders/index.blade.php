@@ -87,7 +87,7 @@
                     @endphp
                     <tr class="hover:bg-gray-50 transition-colors">
                         @if(auth()->user()->isSuperAdmin())<td class="px-3 py-3"><input type="checkbox" value="{{ $po->id }}" aria-label="Select {{ $po->po_number }}" data-bulk-delete-record="purchase_orders"></td>@endif
-                        <td class="px-3 py-2 font-mono text-xs font-bold text-gray-700">{{ $po->po_number }}</td>
+                        <td class="px-3 py-2"><span class="font-mono text-xs font-bold text-gray-700">{{ $po->po_number }}</span>@if($po->title)<br><span class="text-xs text-gray-500">{{ $po->title }}</span>@endif</td>
                         <td class="px-3 py-2 text-gray-800 font-medium">{{ $po->vendor?->name ?? '—' }}</td>
                         <td class="px-3 py-2 text-xs text-gray-500">
                             @if($po->rfqQuote?->rfq)

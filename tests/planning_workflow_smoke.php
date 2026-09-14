@@ -21,7 +21,25 @@ $another=$budget->replicate();$another->status='draft';$another->version=1;$anot
 $private=Task::create(['title'=>'Private','created_by'=>'another-user','assignee_id'=>'another-user','is_private'=>true]);check(!Access::tasks(Task::query(),$user)->whereKey($private->id)->exists(),'private task hidden even from another super admin');
 view()->share(['errors'=>new Illuminate\Support\ViewErrorBag(),'workingFiscalYear'=>$year,'availableFiscalYears'=>collect([$year]),'fiscalYearWritable'=>true,'activeFiscalYearId'=>$year->id]);
 $controller=app(App\Http\Controllers\Planning\PlanningController::class);
+$overviewRequest=Illuminate\Http\Request::create('/planning/overview');
+$overviewRequest->setUserResolver(fn()=>$user);
+$app->instance('request',$overviewRequest);
+$overview=$controller->overview($overviewRequest);
+check(strlen($overview->render())>1000,'Planning overview renders');
+check($overview->getData()['taskCount']===Task::where('assignee_id',$user->id)->where('status','!=','done')->count(),'overview counts only assigned unfinished tasks');
 foreach(['strategy','goals','plan','budget'] as $type){$r=Illuminate\Http\Request::create('/planning','GET',['type'=>$type]);$r->setUserResolver(fn()=>$user);$app->instance('request',$r);check(strlen($controller->index($r)->render())>1000,"$type list renders");check(strlen($controller->create($r)->render())>1000,"$type editor renders");}
 $r=Illuminate\Http\Request::create('/planning');$r->setUserResolver(fn()=>$user);$app->instance('request',$r);check(strlen($controller->show($r,$plan)->render())>1000,'detail renders');check(strlen($controller->setup($r)->render())>1000,'setup renders');check(strlen($controller->support($r)->render())>1000,'support renders');
 foreach(['board','backlog','calendar'] as $mode){$r=Illuminate\Http\Request::create('/planning/tasks','GET',['mode'=>$mode]);$r->setUserResolver(fn()=>$user);$app->instance('request',$r);check(strlen(app(App\Http\Controllers\Planning\TaskController::class)->index($r)->render())>1000,"$mode renders");}
 echo "$checks checks passed in isolated in-memory database.\n";
+
+check(App\Services\Planning\Dates::bs('1943-04-14')==='2000-01-01 BS','BS epoch conversion');
+check(App\Services\Planning\Dates::bs('2024-04-13')==='2081-01-01 BS','BS new year conversion');
+$ordinaryRole=Role::create(['name'=>'planning_staff','display_name'=>'Planning Staff']);
+$outsider=User::create(['name'=>'Other User','email'=>'other@example.invalid','password'=>'unused','role_id'=>$ordinaryRole->id,'is_active'=>true]);
+check(!Access::documents(Document::query(),$outsider)->whereKey($plan->id)->exists(),'unrelated staff cannot read department plans');
+$amended=$plan->replicate();$amended->previous_id=$plan->id;$amended->status='draft';$amended->version=1;$amended->steps=null;$amended->step_index=0;$amended->save();$amendedItem=$amended->items()->create(['title'=>'Training revised','source_id'=>$item->id,'requires_budget'=>true]);
+$workflow->action($amended,$user,'submit',1);$workflow->action($amended,$user,'accept',2);check($plan->fresh()->status==='superseded','approved amendment supersedes prior version');check(Task::where('item_id',$amendedItem->id)->count()===1,'amendment retains original task');
+$duplicateBudget=Document::create(['type'=>'budget','title'=>'Duplicate via amendment','department_id'=>$dept->id,'created_by'=>$user->id,'approval_chain_id'=>$chain->id,'fiscal_year_id'=>$year->id]);$duplicateBudget->items()->create(['title'=>'Duplicate','source_id'=>$amendedItem->id,'amount'=>20000]);$workflow->action($duplicateBudget,$user,'submit',1);try{$workflow->action($duplicateBudget,$user,'accept',2);throw new RuntimeException('funded twice');}catch(Illuminate\Validation\ValidationException $e){check(App\Models\DepartmentBudget::count()===1,'amended activity cannot receive duplicate funding');}
+echo "$checks total checks passed.\n";
+
+if(in_array('--preview',$argv,true)){$r=Illuminate\Http\Request::create('/planning/documents/create','GET',['type'=>'plan']);$r->setUserResolver(fn()=>$user);$app->instance('request',$r);file_put_contents('/tmp/planning-preview/index.html',$controller->create($r)->render());}

@@ -10,6 +10,7 @@
         <div>
             <p class="text-teal-300 text-xs font-semibold uppercase tracking-wide mb-1">Purchase Order</p>
             <p class="font-bold text-2xl font-mono">{{ $po->po_number }}</p>
+            @if($po->title)<p class="mt-1 text-sm text-slate-300">{{ $po->title }}</p>@endif
         </div>
         <div class="text-right">
             <p class="text-gray-400 text-xs mb-1">Grand Total</p>
@@ -56,6 +57,12 @@
                 <dt class="text-xs text-gray-400 font-semibold uppercase mb-1">Status</dt>
                 <dd><span class="px-2 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-700">{{ $po->statusLabel() }}</span></dd>
             </div>
+            @if($po->budget)
+            <div class="sm:col-span-2">
+                <dt class="text-xs text-gray-400 font-semibold uppercase mb-1">Budget</dt>
+                <dd class="text-gray-700">{{ $po->budget->department?->name ? $po->budget->department->name.' — ' : '' }}{{ $po->budget->activity_title }} · FY {{ $po->budget->fiscal_year }}</dd>
+            </div>
+            @endif
         </dl>
         @if($po->terms_and_conditions)
         <div class="mt-4 pt-4 border-t border-gray-100">

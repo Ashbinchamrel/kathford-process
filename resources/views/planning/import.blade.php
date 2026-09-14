@@ -1,0 +1,4 @@
+@extends('planning.layout')
+@section('planning-content')
+<div class="kcard p-5"><h2 class="font-semibold">Import preview · {{ count($rows) }} rows</h2><p class="text-sm my-3">These rows will be added to the draft. Owners, dates and targets can be completed before submission.</p><table class="w-full text-sm"><thead><tr><th>Title</th><th>Programme / batch</th><th>Definition of Done</th></tr></thead><tbody>@foreach($rows as $row)<tr><td>{{ $row['title'] }}</td><td>{{ $row['programme'] }} {{ $row['batch'] }}</td><td>{{ $row['definition_of_done'] }}</td></tr>@endforeach</tbody></table><form method="POST" action="{{ route('planning.import.confirm',$document) }}" class="mt-4">@csrf<input type="hidden" name="import_id" value="{{ $importId }}"><button class="btn-primary">Add to draft</button></form></div>
+@endsection

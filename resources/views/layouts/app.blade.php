@@ -207,6 +207,16 @@
             </a>
 @endcan
 
+            @can('checklists.view')
+<a href="{{ route('store-action.index') }}"
+               class="nav-link {{ request()->routeIs('store-action.*') ? 'active' : '' }}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                Store Action
+            </a>
+@endcan
+
             @can('payments.view')
 <a href="{{ route('payments.index') }}"
                class="nav-link {{ request()->routeIs('payments.*') ? 'active' : '' }}">
@@ -249,7 +259,7 @@
             @endif
 
             @can('planning.view')
-            <a href="{{ route('planning.index') }}" class="nav-link {{ request()->routeIs('planning.*') ? 'active' : '' }}">Planning</a>
+            <a href="{{ route('planning.overview') }}" class="nav-link {{ request()->routeIs('planning.*') ? 'active' : '' }}">Planning</a>
             @endcan
             @if(auth()->user()->isSuperAdmin() || auth()->user()->can('procurement_setup.manage'))
             <a href="{{ route('settings.index') }}" class="nav-link {{ request()->routeIs('settings.*','admin.*') ? 'active' : '' }}">

@@ -84,7 +84,8 @@ class ActivityFormController extends Controller
                 'remaining' => $budget->remainingAmount(),
             ])->values();
 
-        return view('activity-forms.create', compact('categories', 'departments', 'selected', 'budgetOptions'));
+        $planningBudget = $request->filled('budget_id') ? DepartmentBudget::active()->find($request->budget_id) : null;
+        return view('activity-forms.create', compact('categories', 'departments', 'selected', 'budgetOptions', 'planningBudget'));
     }
 
     public function store(ActivityFormRequest $request): RedirectResponse
@@ -139,6 +140,23 @@ class ActivityFormController extends Controller
         ]);
 
         return view('activity-forms.show', ['form' => $activityForm]);
+    }
+
+    public function pdf(ActivityForm $activityForm): \Illuminate\Http\Response
+    {
+        $this->authorize('view', $activityForm);
+        $activityForm->load([
+            'category', 'creator', 'department', 'budget',
+            'verifier', 'approver', 'approvalActions.actor',
+            'lineItems.vendor',
+        ]);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView(
+            'activity-forms.pdf',
+            array_merge(['form' => $activityForm], \App\Support\DocumentBranding::data()),
+        )->setPaper('a4', 'portrait');
+
+        return $pdf->download("{$activityForm->form_number}.pdf");
     }
 
     public function edit(ActivityForm $activityForm): View

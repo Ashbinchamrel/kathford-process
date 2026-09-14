@@ -1,6 +1,18 @@
 <?php
+
 namespace App\Models\Planning;
-class Decision extends \Illuminate\Database\Eloquent\Model { 
-protected $table="planning_decisions"; protected $guarded=[];
-public function actor(){return $this->belongsTo(\App\Models\User::class,'actor_id');}
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+
+class Decision extends Model
+{
+    protected $table = 'planning_decisions';
+
+    protected $guarded = [];
+
+    public function actor()
+    {
+        return $this->belongsTo(User::class, 'actor_id');
+    }
 }

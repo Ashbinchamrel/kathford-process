@@ -1,0 +1,9 @@
+@if($document->strategy_data)
+<p class="text-sm text-gray-500">Long-term period: {{ $document->strategy_data['starts_on'] }} — {{ $document->strategy_data['ends_on'] }} · {{ count($document->strategy_data['semesters']) }} semesters</p>
+@if(isset($document->strategy_data['review_reason']))<div class="kcard p-4 text-sm"><strong>Review reason:</strong> {{ $document->strategy_data['review_reason'] }}</div>@endif
+@if($document->status==='approved' && \App\Services\Planning\Governance::canWrite(auth()->user(),'strategy','review') && \App\Services\Planning\Governance::canWrite(auth()->user(),'strategy','edit'))
+<details class="kcard p-4"><summary class="font-semibold">Start semester review</summary><form class="mt-4 space-y-3" method="POST" action="{{ route('planning.amend',$document) }}">@csrf<div><label>Semester being reviewed *</label><select name="review_semester" required>@foreach($document->strategy_data['semesters'] as $i=>$semester)<option value="{{ $i }}">{{ $semester['label'] }}</option>@endforeach</select></div><div><label>Reason / scope of changes *</label><textarea name="review_reason" required rows="2"></textarea></div><p class="text-sm text-gray-500">Changes will be saved as a new revision and sent for approval. Existing goals retain their approved strategy link.</p><button class="btn-primary">Create review draft</button></form></details>
+@endif @endif
+@if($document->previous_id)<p class="text-sm"><a href="{{ route('planning.show',$document->previous_id) }}">View previous revision →</a></p>@endif
+@php $revisions=\App\Services\Planning\Access::documents(\App\Models\Planning\Document::query(),auth()->user())->where('previous_id',$document->id)->get(); @endphp
+@foreach($revisions as $revision)<p class="text-sm"><a href="{{ route('planning.show',$revision) }}">Revision {{ $revision->revision }} · {{ ucfirst($revision->status) }} →</a></p>@endforeach

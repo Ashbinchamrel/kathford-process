@@ -21,6 +21,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentAuthorisationController;
 use App\Http\Controllers\ProcurementChecklistController;
+use App\Http\Controllers\StoreActionController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\RfqController;
 use App\Http\Controllers\VendorController;
@@ -99,6 +100,7 @@ Route::middleware(['auth', 'active', \App\Http\Middleware\EnsureRecordVisibility
     Route::post('activity-forms/{activityForm}/submit', [ActivityFormController::class, 'submit'])->middleware('can:activity_forms.submit')->name('activity-forms.submit');
     Route::post('activity-forms/{activityForm}/verify', [ActivityFormController::class, 'verify'])->middleware('can:activity_forms.verify')->name('activity-forms.verify');
     Route::post('activity-forms/{activityForm}/approve', [ActivityFormController::class, 'approve'])->middleware('can:activity_forms.approve')->name('activity-forms.approve');
+    Route::get('activity-forms/{activityForm}/pdf', [ActivityFormController::class, 'pdf'])->middleware('can:activity_forms.view')->name('activity-forms.pdf');
     Route::get('activity-forms/{activityForm}/attachments/{attachment}/download', [ActivityFormController::class, 'downloadAttachment'])->middleware('can:activity_forms.view')->name('activity-forms.attachment.download');
     Route::delete('activity-forms/{activityForm}/attachments/{attachment}', [ActivityFormController::class, 'deleteAttachment'])->middleware('can:activity_forms.edit')->name('activity-forms.attachment.delete');
 
@@ -145,6 +147,11 @@ Route::middleware(['auth', 'active', \App\Http\Middleware\EnsureRecordVisibility
     Route::put('checklists/{checklist}', [ProcurementChecklistController::class, 'update'])->middleware('can:checklists.complete')->name('checklists.update');
     Route::post('checklists/{checklist}/send-to-accounts', [ProcurementChecklistController::class, 'sendToAccounts'])->middleware('can:checklists.complete')->name('checklists.send-to-accounts');
     Route::get('checklists/{checklist}/pdf', [ProcurementChecklistController::class, 'pdf'])->middleware('can:checklists.view')->name('checklists.pdf');
+    Route::get('checklists/{checklist}/activity-form/pdf', [ProcurementChecklistController::class, 'activityFormPdf'])->middleware('can:checklists.view')->name('checklists.activity-form.pdf');
+
+    // Store Action — "Available in Store" RFQ items skip vendor/PO sourcing entirely.
+    Route::get('store-action', [StoreActionController::class, 'index'])->middleware('can:checklists.view')->name('store-action.index');
+    Route::post('store-action/{item}/issue', [StoreActionController::class, 'markIssued'])->middleware('can:checklists.complete')->name('store-action.issue');
 
     // Vendors
     Route::resource('vendors', VendorController::class)
@@ -163,6 +170,7 @@ Route::middleware(['auth', 'active', \App\Http\Middleware\EnsureRecordVisibility
         ->middlewareFor(['create', 'store'], 'can:payments.create')
         ->middlewareFor(['edit', 'update'], 'can:payments.edit');
     Route::post('payments/{payment}/mark-paid', [PaymentController::class, 'markPaid'])->middleware('can:payments.mark_paid')->name('payments.mark-paid');
+    Route::get('payments/{payment}/activity-form/pdf', [PaymentController::class, 'activityFormPdf'])->middleware('can:payments.view')->name('payments.activity-form.pdf');
 
     Route::resource('payment-authorisations', PaymentAuthorisationController::class)->only(['index', 'create', 'store', 'show'])
         ->middlewareFor(['index', 'show'], 'can:payment_authorisations.view')

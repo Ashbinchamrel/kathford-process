@@ -1,6 +1,15 @@
 <?php
-namespace App\Models\Planning;
-class Period extends \Illuminate\Database\Eloquent\Model { use \Illuminate\Database\Eloquent\Concerns\HasUuids;
-protected $table="planning_periods"; protected $guarded=[];
 
+namespace App\Models\Planning;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+
+class Period extends Model
+{
+    use HasUuids;
+
+    protected $table = 'planning_periods';
+
+    protected $guarded = [];
 }

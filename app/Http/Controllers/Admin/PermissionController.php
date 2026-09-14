@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Permission;
 use App\Models\User;
+use App\Support\ChainAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -36,11 +37,11 @@ class PermissionController extends Controller
             'budgets' => ['title' => 'Budgets', 'description' => 'Review and maintain department budget allocations.'],
             'admin' => ['title' => 'Administration', 'description' => 'Manage configuration, users, and organisation controls.'],
         ];
-        $allPermissions = Permission::whereIn('module', $moduleOrder)->orderBy('sort_order')->get()->groupBy('module');
+        $allPermissions = Permission::whereNotIn('key', ['planning.board_dashboard', 'planning.cmt_dashboard', 'planning.department_dashboard'])->whereIn('module', $moduleOrder)->orderBy('sort_order')->get()->reject(fn ($p) => ChainAccess::decisionKey($p->key))->groupBy('module');
         $groupedPermissions = collect($moduleOrder)
             ->filter(fn (string $module) => $allPermissions->has($module))
             ->mapWithKeys(fn (string $module) => [$module => ['meta' => $moduleMeta[$module], 'permissions' => $allPermissions[$module]]]);
-        $userPermissionKeys  = $user->permissions()->pluck('permissions.key')->all();
+        $userPermissionKeys = $user->permissions()->pluck('permissions.key')->all();
 
         return view('admin.permissions.edit', compact('user', 'groupedPermissions', 'userPermissionKeys'));
     }
@@ -51,11 +52,14 @@ class PermissionController extends Controller
         abort_if($user->isSuperAdmin(), 403, 'Super Admin permissions cannot be modified.');
 
         $request->validate([
-            'permissions'   => ['nullable', 'array'],
+            'permissions' => ['nullable', 'array'],
             'permissions.*' => ['exists:permissions,id'],
         ]);
 
         $permissionIds = $request->input('permissions', []);
+
+        // Retain legacy chain flags for compatibility; decision access is derived from assignments.
+        $permissionIds = array_unique(array_merge($permissionIds, $user->permissions()->get()->filter(fn ($p) => ChainAccess::decisionKey($p->key))->pluck('id')->all()));
 
         // Sync with pivot data
         $syncData = [];
@@ -72,7 +76,7 @@ class PermissionController extends Controller
             auth()->user(),
             'admin.permissions.updated',
             $user,
-            "Updated permissions for {$user->name}: " . count($permissionIds) . ' permissions granted'
+            "Updated permissions for {$user->name}: ".count($permissionIds).' permissions granted'
         );
 
         return redirect()->route('admin.permissions.edit', $user)

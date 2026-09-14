@@ -25,7 +25,26 @@
         {{-- Line items — only editable on standalone POs --}}
         @if(! $purchaseOrder->rfq_quote_id)
         <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-            <div class="flex items-center justify-between">
+            <h2 class="text-base font-semibold text-gray-800">Title &amp; Budget</h2>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Title / Subject <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" value="{{ old('title', $purchaseOrder->title) }}" required
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                    @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Budget <span class="text-red-500">*</span></label>
+                    <select name="budget_id" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                        <option value="">— Select an allocated budget —</option>
+                        @foreach($budgetOptions as $budget)
+                        <option value="{{ $budget['id'] }}" {{ old('budget_id', $purchaseOrder->budget_id) === $budget['id'] ? 'selected' : '' }}>{{ $budget['department_name'] ? $budget['department_name'].' — ' : '' }}{{ $budget['title'] }} — FY {{ $budget['fiscal_year'] }} (Remaining: Rs {{ number_format($budget['remaining'], 2) }})</option>
+                        @endforeach
+                    </select>
+                    @error('budget_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-gray-100">
                 <h2 class="text-base font-semibold text-gray-800">Line Items</h2>
                 <button type="button" onclick="addItem()"
                         class="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1">

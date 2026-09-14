@@ -39,6 +39,7 @@
                     @error('roles') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     @error('roles.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
+                @include('admin.users.planning-membership')
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
                     <select name="department_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">
@@ -68,6 +69,7 @@
                 </div>
                 <div>
                     <label class="flex items-center gap-2 cursor-pointer">
+                        @if($user->id === auth()->id())<input type="hidden" name="is_active" value="1">@else<input type="hidden" name="is_active" value="0">@endif
                         <input type="checkbox" name="is_active" value="1" {{ old('is_active', $user->is_active) ? 'checked' : '' }} class="rounded text-teal-500"
                                {{ $user->id === auth()->id() ? 'disabled' : '' }}>
                         <span class="text-sm font-medium text-gray-700">Active Account</span>

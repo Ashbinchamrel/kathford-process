@@ -41,10 +41,21 @@ class DepartmentBudget extends Model
         return $this->hasMany(ActivityForm::class, 'budget_id');
     }
 
-    /** Amount committed by submitted, verified, or approved activity forms. */
-    public function reservedAmount(?string $excludingFormId = null): float
+    /** Standalone (non-RFQ) manual Purchase Orders tracked directly against this budget. */
+    public function purchaseOrders(): HasMany
     {
-        $query = $this->activityForms()
+        return $this->hasMany(PurchaseOrder::class, 'budget_id');
+    }
+
+    private const PO_RESERVED_STATUSES = [
+        'pending_verification', 'pending_approval', 'approved',
+        'sent_to_vendor', 'goods_pending', 'partially_received', 'fully_received',
+    ];
+
+    /** Amount committed by submitted, verified, or approved activity forms and standalone POs. */
+    public function reservedAmount(?string $excludingFormId = null, ?string $excludingPoId = null): float
+    {
+        $formQuery = $this->activityForms()
             ->whereIn('status', [
                 ActivityForm::STATUS_PENDING_VERIFICATION,
                 ActivityForm::STATUS_PENDING_APPROVAL,
@@ -52,15 +63,21 @@ class DepartmentBudget extends Model
             ]);
 
         if ($excludingFormId) {
-            $query->whereKeyNot($excludingFormId);
+            $formQuery->whereKeyNot($excludingFormId);
         }
 
-        return (float) $query->sum('total_estimated_amount');
+        $poQuery = $this->purchaseOrders()->whereIn('status', self::PO_RESERVED_STATUSES);
+
+        if ($excludingPoId) {
+            $poQuery->whereKeyNot($excludingPoId);
+        }
+
+        return (float) $formQuery->sum('total_estimated_amount') + (float) $poQuery->sum('total_amount');
     }
 
-    public function remainingAmount(?string $excludingFormId = null): float
+    public function remainingAmount(?string $excludingFormId = null, ?string $excludingPoId = null): float
     {
-        return (float) $this->allocated_amount - $this->reservedAmount($excludingFormId);
+        return (float) $this->allocated_amount - $this->reservedAmount($excludingFormId, $excludingPoId);
     }
 
     public function scopeActive($query)

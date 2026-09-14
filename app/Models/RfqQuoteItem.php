@@ -49,6 +49,11 @@ class RfqQuoteItem extends Model
         return $this->belongsTo(RfqQuote::class, 'rfq_quote_id');
     }
 
+    public function rfqItem(): BelongsTo
+    {
+        return $this->belongsTo(RfqItem::class, 'rfq_item_id');
+    }
+
     public function lineItem(): BelongsTo
     {
         return $this->belongsTo(FormLineItem::class, 'line_item_id');

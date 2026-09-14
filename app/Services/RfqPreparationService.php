@@ -23,14 +23,19 @@ class RfqPreparationService {
                 if ($source && in_array($source->id,$seenSources,true)) $this->fail($index,'An activity item can only be used once.');
                 if ($source) $seenSources[]=$source->id;
                 $exempt = !empty($input['quotation_not_required']);
+                $storeItem = !empty($input['available_in_store']);
                 $catalog = !empty($input['vendor_rate_id']) ? VendorRate::available()->find($input['vendor_rate_id']) : null;
                 if (!empty($input['vendor_rate_id']) && !$catalog) $this->fail($index,'The approved vendor rate has expired or is unavailable.');
                 if ($exempt && $catalog) $this->fail($index,'Choose either direct payment or an approved vendor rate.');
                 if ($exempt && (!$source || !$rfq->activityForm?->isApproved())) $this->fail($index,'Quotation Not Required needs an approved activity item.');
+                if ($exempt && $storeItem) $this->fail($index,'An item sent directly to Payment cannot also be marked Available in Store.');
+                if ($storeItem && (!$source || !$rfq->activityForm?->isApproved())) $this->fail($index,'Available in Store needs an approved activity item.');
+                $skipsVendor = $exempt || $storeItem;
                 $item = $rfq->requestItems()->create([
-                    'source_line_item_id'=>$source?->id,'description'=>$exempt ? $source->item_name : ($catalog?->item_name ?? $input['description']),
-                    'quantity'=>$exempt ? $source->quantity : $input['quantity'],'unit'=>$exempt ? $source->unit : ($catalog?->unit ?? $input['unit']??null),
+                    'source_line_item_id'=>$source?->id,'description'=>$skipsVendor ? $source->item_name : ($catalog?->item_name ?? $input['description']),
+                    'quantity'=>$skipsVendor ? $source->quantity : $input['quantity'],'unit'=>$skipsVendor ? $source->unit : ($catalog?->unit ?? $input['unit']??null),
                     'request_remarks'=>trim(($input['request_remarks']??'').($catalog ? "\nApproved catalogue rate #".$catalog->id.' valid '.$catalog->valid_from->format('Y-m-d').' to '.$catalog->valid_until->format('Y-m-d') : '')),'quotation_not_required'=>$exempt,
+                    'available_in_store'=>$storeItem,
                     'vendor_rate_id'=>$catalog?->id,'approved_rate'=>$catalog?->unit_rate,
                 ]);
                 if ($exempt) {
@@ -44,6 +49,11 @@ class RfqPreparationService {
                         'activity_reference'=>$rfq->activityForm->form_number,'notes'=>'Quotation not required: '.$item->description.' · '.$rfq->rfq_number,
                     ]);
                     $item->update(['payment_id'=>$payment->id]);
+                    continue;
+                }
+                if ($storeItem) {
+                    // Already available in campus store — no vendor/PO involved.
+                    // Tracked on the Store Action list until issued.
                     continue;
                 }
                 $vendors = $catalog ? collect([$catalog->vendor]) : Vendor::active()->whereIn('id',$input['vendor_ids']??[])->whereNotNull('email')->get();

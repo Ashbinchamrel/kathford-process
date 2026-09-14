@@ -101,7 +101,7 @@ class RfqController extends Controller
             'items.*.quantity'=>['required','numeric','min:0.01'], 'items.*.unit'=>['nullable','string','max:50'],
             'items.*.request_remarks'=>['nullable','string','max:1000'], 'items.*.source_line_item_id'=>['nullable','string'],
             'items.*.vendor_ids'=>['nullable','array'], 'items.*.vendor_ids.*'=>['string'],
-            'items.*.quotation_not_required'=>['nullable','boolean'], 'items.*.vendor_rate_id'=>['nullable','integer'],
+            'items.*.quotation_not_required'=>['nullable','boolean'], 'items.*.available_in_store'=>['nullable','boolean'], 'items.*.vendor_rate_id'=>['nullable','integer'],
         ]);
         if ($request->boolean('send_now')) \Illuminate\Support\Facades\Gate::authorize('rfq.send');
         $rfq=app(\App\Services\RfqPreparationService::class)->save($data);

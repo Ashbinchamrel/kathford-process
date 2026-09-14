@@ -225,6 +225,21 @@ class ProcurementChecklistController extends Controller
             ->download("Checklist-{$checklist->purchaseOrder->po_number}-{$checklist->vendorBill->bill_number}.pdf");
     }
 
+    /** Anyone who can work this checklist can pull the Activity Form behind it, regardless of chain/ownership. */
+    public function activityFormPdf(ProcurementChecklist $checklist): \Symfony\Component\HttpFoundation\Response
+    {
+        $this->authorizeChecklistUser();
+        $checklist->load('purchaseOrder.rfqQuote.rfq.activityForm');
+        $form = $checklist->purchaseOrder?->rfqQuote?->rfq?->activityForm;
+        abort_unless($form, 404);
+
+        $form->load(['category', 'creator', 'department', 'budget', 'verifier', 'approver', 'approvalActions.actor', 'lineItems.vendor']);
+
+        return Pdf::loadView('activity-forms.pdf', array_merge(['form' => $form], DocumentBranding::data()))
+            ->setPaper('a4', 'portrait')
+            ->download("{$form->form_number}.pdf");
+    }
+
     private function authorizeChecklistUser(): void
     {
         abort_unless(

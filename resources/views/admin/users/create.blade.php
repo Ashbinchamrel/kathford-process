@@ -52,6 +52,7 @@
                     @error('roles') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     @error('roles.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
+                @include('admin.users.planning-membership')
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
                     <select name="department_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none">

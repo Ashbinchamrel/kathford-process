@@ -15,12 +15,13 @@ use Illuminate\Support\Collection;
 class User extends Authenticatable
 {
     public ?array $_permissionKeys = null;
+
     private ?Collection $_allRoles = null;
 
-    use HasFactory, Notifiable, HasUuids, SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes;
 
     protected $fillable = [
-        'dashboard_widgets', 'name', 'email', 'password', 'google_id', 'avatar',
+        'is_board_member', 'is_cmt_member', 'dashboard_widgets', 'name', 'email', 'password', 'google_id', 'avatar',
         'role_id', 'department_id', 'phone', 'designation',
         'two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at',
         'is_active', 'last_login_at', 'last_login_ip',
@@ -33,10 +34,11 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'is_board_member' => 'boolean', 'is_cmt_member' => 'boolean',
             'dashboard_widgets' => 'array',
             'two_factor_confirmed_at' => 'datetime',
-            'last_login_at'           => 'datetime',
-            'is_active'               => 'boolean',
+            'last_login_at' => 'datetime',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -109,11 +111,30 @@ class User extends Authenticatable
         return $this->allRoles()->pluck('name')->intersect($roles)->isNotEmpty();
     }
 
-    public function isSuperAdmin(): bool  { return $this->hasRole('super_admin'); }
-    public function isVerifier(): bool    { return $this->hasRole('verifier'); }
-    public function isApprover(): bool    { return $this->hasRole('approver'); }
-    public function isFinance(): bool     { return $this->hasRole('finance'); }
-    public function isGeneral(): bool     { return $this->hasRole('general'); }
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole('super_admin');
+    }
+
+    public function isVerifier(): bool
+    {
+        return $this->hasRole('verifier');
+    }
+
+    public function isApprover(): bool
+    {
+        return $this->hasRole('approver');
+    }
+
+    public function isFinance(): bool
+    {
+        return $this->hasRole('finance');
+    }
+
+    public function isGeneral(): bool
+    {
+        return $this->hasRole('general');
+    }
 
     public function canApprove(): bool
     {
@@ -137,8 +158,8 @@ class User extends Authenticatable
     public function scopeWithRole($query, string $role)
     {
         return $query->where(function ($q) use ($role) {
-            $q->whereHas('role', fn($q2) => $q2->where('name', $role))
-              ->orWhereHas('roles', fn($q2) => $q2->where('name', $role));
+            $q->whereHas('role', fn ($q2) => $q2->where('name', $role))
+                ->orWhereHas('roles', fn ($q2) => $q2->where('name', $role));
         });
     }
 
@@ -146,7 +167,7 @@ class User extends Authenticatable
     {
         return $query->where(function ($q) use ($roleId) {
             $q->where('role_id', $roleId)
-              ->orWhereHas('roles', fn($q2) => $q2->where('roles.id', $roleId));
+                ->orWhereHas('roles', fn ($q2) => $q2->where('roles.id', $roleId));
         });
     }
 }

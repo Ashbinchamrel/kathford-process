@@ -15,6 +15,9 @@
 @if($rfq->requestItems()->where('quotation_not_required',true)->exists())
 <div class="kcard p-5 mb-4"><h2 class="font-semibold mb-3">Items sent directly to Payment Schedule</h2>@foreach($rfq->requestItems()->where('quotation_not_required',true)->get() as $item)<p class="text-sm">{{ $item->description }} · Approved Activity {{ $rfq->activityForm?->form_number }}</p>@endforeach</div>
 @endif
+@if($rfq->requestItems()->where('available_in_store',true)->exists())
+<div class="kcard p-5 mb-4"><h2 class="font-semibold mb-3">Items available in Store</h2>@foreach($rfq->requestItems()->where('available_in_store',true)->get() as $item)<p class="text-sm">{{ $item->description }} · <span class="{{ $item->isStoreIssued() ? 'text-green-700' : 'text-amber-700' }} font-medium">{{ $item->isStoreIssued() ? 'Issued' : 'Awaiting issuance' }}</span></p>@endforeach @can('checklists.view') <a href="{{ route('store-action.index') }}" class="mt-2 inline-block text-sm font-semibold text-teal-700">Manage on Store Action →</a> @endcan</div>
+@endif
 <div class="max-w-5xl space-y-5">
     {{-- Header --}}
     <div class="bg-white rounded-xl border border-gray-200 p-6">
