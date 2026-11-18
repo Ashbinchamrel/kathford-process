@@ -38,7 +38,7 @@ class ChainAccess
 
     public static function planningIds(User $user): array
     {
-        $docs = self::assignedPlanning(Document::query(), $user)->get(['id', 'parent_id'])->merge(Document::where('type', 'cmt_goals')->where('status', 'approved')->whereHas('items', fn ($q) => $q->whereJsonContains('details->supporting_owner_ids', $user->id))->get(['id', 'parent_id']));
+        $docs = self::assignedPlanning(Document::query(), $user)->get(['id', 'parent_id'])->merge(Document::whereIn('type', ['cmt_goals', 'goals'])->where('status', 'approved')->whereHas('items', fn ($q) => $q->whereJsonContains('details->supporting_owner_ids', $user->id))->get(['id', 'parent_id']));
         $ids = $docs->pluck('id')->all();
         $parents = $docs->pluck('parent_id')->filter()->all();
         // The longest Planning hierarchy is strategy -> CMT -> department -> plan -> budget.

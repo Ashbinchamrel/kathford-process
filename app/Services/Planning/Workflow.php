@@ -42,8 +42,8 @@ class Workflow
                 if ($d->parent_id && ! in_array($d->parent?->status, $d->previous_id ? ['approved', 'superseded'] : ['approved'])) {
                     $this->fail('The linked parent must be approved first.');
                 }
-                if ($d->type === 'cmt_goals') {
-                    $d->approval_chain_id = Governance::defaultChain('cmt_goals');
+                if (in_array($d->type, ['cmt_goals', 'goals'])) {
+                    $d->approval_chain_id = Governance::defaultChain($d->type);
                 }
                 $chain = ApprovalChain::active()->with(['verifiers', 'approvers'])->find($d->approval_chain_id);
                 if (! $chain || $chain->approvers->isEmpty()) {
@@ -117,10 +117,10 @@ class Workflow
 
     private function publish(Document $d, User $actor): void
     {
-        if ($d->type === 'cmt_goals') {
+        if (in_array($d->type, ['cmt_goals', 'goals'])) {
             $ids = $d->items->flatMap(fn ($item) => $item->details['supporting_owner_ids'] ?? [])->unique();
             foreach (User::active()->whereIn('id', $ids)->get() as $supporter) {
-                app(NotificationService::class)->send($supporter, 'cmt_support_assignment', 'CMT goals approved', 'You are a supporting owner for '.$d->title, route('planning.show', $d), false);
+                app(NotificationService::class)->send($supporter, $d->type === 'goals' ? 'department_support_assignment' : 'cmt_support_assignment', Access::TYPES[$d->type].' approved', 'You are a supporting owner for '.$d->title, route('planning.show', $d), false);
             }
         }
         if ($d->type === 'plan') {

@@ -3,6 +3,7 @@
 @section('page-title', $form->form_number)
 
 @section('content')
+@include('partials.record-approval', ['approvalRecord'=>$form, 'approvalLabel'=>'Activity Form approval'])
 <div class="max-w-4xl space-y-5" x-data="{ previewUrl: null, previewName: '' }">
 
     {{-- ══ Success / Error flash ══ --}}

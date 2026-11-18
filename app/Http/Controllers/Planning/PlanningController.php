@@ -85,7 +85,7 @@ class PlanningController extends Controller
             return app(StrategyController::class)->editor($r, new Document(['type' => 'strategy', 'approval_chain_id' => Governance::defaultChain('strategy')]));
         }
 
-        return view($type === 'cmt_goals' ? 'planning.cmt-edit' : 'planning.edit', $this->lookups($r) + ['document' => new Document(['type' => $type, 'approval_chain_id' => Governance::defaultChain($type)]), 'items' => collect()]);
+        return view(in_array($type, ['cmt_goals', 'goals']) ? 'planning.cmt-edit' : 'planning.edit', $this->lookups($r) + ['document' => new Document(['type' => $type, 'approval_chain_id' => Governance::defaultChain($type)]), 'items' => collect()]);
     }
 
     public function store(Request $r)
@@ -95,7 +95,7 @@ class PlanningController extends Controller
         }
         $d = new Document(['created_by' => $r->user()->id]);
 
-        return $r->input('type') === 'cmt_goals' ? DB::transaction(fn () => $this->save($r, $d)) : $this->save($r, $d);
+        return in_array($r->input('type'), ['cmt_goals', 'goals']) ? DB::transaction(fn () => $this->save($r, $d)) : $this->save($r, $d);
     }
 
     public function edit(Request $r, Document $document)
@@ -106,7 +106,7 @@ class PlanningController extends Controller
         }
         abort_unless(in_array($document->status, ['draft', 'returned']) && Governance::canWrite($r->user(), $document->type), 403);
 
-        return view($document->type === 'cmt_goals' ? 'planning.cmt-edit' : 'planning.edit', $this->lookups($r) + ['document' => $document, 'items' => $document->items]);
+        return view(in_array($document->type, ['cmt_goals', 'goals']) ? 'planning.cmt-edit' : 'planning.edit', $this->lookups($r) + ['document' => $document, 'items' => $document->items]);
     }
 
     public function update(Request $r, Document $document)
@@ -117,12 +117,12 @@ class PlanningController extends Controller
             return app(StrategyController::class)->save($r, $document);
         }
 
-        return $document->type === 'cmt_goals' ? DB::transaction(fn () => $this->save($r, $document)) : $this->save($r, $document);
+        return in_array($document->type, ['cmt_goals', 'goals']) ? DB::transaction(fn () => $this->save($r, $document)) : $this->save($r, $document);
     }
 
     private function save(Request $r, Document $document)
     {
-        if ($r->input('type') === 'cmt_goals') {
+        if (in_array($r->input('type'), ['cmt_goals', 'goals'])) {
             CmtGoals::prepare($r);
             CmtGoals::normalize($r);
         }
@@ -150,6 +150,9 @@ class PlanningController extends Controller
             $parent = Document::findOrFail($data['parent_id']);
             Access::document($parent, $r->user());
             $expected = Governance::parentType($data['type']);
+            if ($document->exists && $document->type === 'goals' && $document->parent_id === $parent->id && $parent->type === 'cmt_goals') {
+                $expected = 'cmt_goals';
+            }
             abort_unless($expected === $parent->type && in_array($parent->status, $document->previous_id ? ['approved', 'superseded'] : ['approved']) && (in_array($parent->type, ['strategy', 'cmt_goals']) || $parent->department_id === ($data['department_id'] ?? null)), 422, 'Choose an approved parent of the matching type and department.');
         }
         if ($data['type'] === 'budget') {
@@ -191,14 +194,14 @@ class PlanningController extends Controller
             }
             $d->unsetRelation('items');
             if (in_array($d->type, ['cmt_goals', 'goals'])) {
-                abort_unless($d->parent_id && $d->parent?->type === Governance::parentType($d->type), 422, 'Select the correct approved parent.');
+                abort_unless($d->parent_id && ($d->parent?->type === Governance::parentType($d->type) || ($document->exists && $d->type === 'goals' && $d->parent?->type === 'cmt_goals')), 422, 'Select the correct approved parent.');
                 foreach ($d->items as $line) {
                     if ($line->source_id) {
                         abort_unless($d->parent->items()->whereKey($line->source_id)->exists(), 422, 'The goal source must belong to the selected parent.');
                     }
                 }
             }
-            if ($d->type === 'cmt_goals') {
+            if (in_array($d->type, ['cmt_goals', 'goals'])) {
                 CmtGoals::validateLinks($d);
             }
             $document->id = $d->id;

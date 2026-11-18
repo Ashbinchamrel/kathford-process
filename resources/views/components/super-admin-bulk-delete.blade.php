@@ -1,7 +1,7 @@
-@props(['module'])
+@props(['module', 'route' => 'admin.transactions.bulk-delete'])
 
 @if(auth()->user()?->isSuperAdmin() && ($fiscalYearWritable ?? true))
-    <form id="bulk-delete-{{ $module }}" method="POST" action="{{ route('admin.transactions.bulk-delete', $module) }}" class="hidden items-center gap-3 border-b border-rose-100 bg-rose-50 px-5 py-3 sm:flex" data-bulk-delete-form="{{ $module }}">
+    <form id="bulk-delete-{{ $module }}" method="POST" action="{{ route($route, $module) }}" class="hidden items-center gap-3 border-b border-rose-100 bg-rose-50 px-5 py-3 sm:flex" data-bulk-delete-form="{{ $module }}">
         @csrf
         <input type="hidden" name="_fiscal_year_id" value="{{ $workingFiscalYear?->id }}">
         @method('DELETE')

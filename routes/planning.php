@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Planning\ImportController;
+use App\Http\Controllers\Planning\PlanningBulkDeleteController;
 use App\Http\Controllers\Planning\PlanningController;
 use App\Http\Controllers\Planning\TaskController;
 use App\Http\Middleware\PlanningValidation;
@@ -18,6 +19,7 @@ Route::middleware(['auth', 'active', 'can:planning.view', PlanningValidation::cl
     Route::post('/periods', [PlanningController::class, 'period'])->name('periods.store');
     Route::get('/support', [PlanningController::class, 'support'])->name('support');
     Route::post('/support/{support}', [PlanningController::class, 'respond'])->name('support.respond');
+    Route::delete('/bulk-delete/{module}', [PlanningBulkDeleteController::class, 'destroy'])->middleware('role:super_admin')->name('bulk-delete');
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks');
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');

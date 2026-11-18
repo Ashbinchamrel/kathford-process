@@ -3,6 +3,7 @@
 @section('page-title', 'RFQ: ' . $rfq->rfq_number)
 
 @section('content')
+@include('partials.record-approval', ['relatedApproval'=>true, 'approvalRecord'=>$rfq->activityForm, 'approvalLabel'=>'Linked Activity Form approval · RFQs use quotation and award actions'])
 @if($rfq->handoff_activity_id && !$rfq->requestItems()->exists() && !$rfq->quotes()->exists())
 @can('rfq.create')<div class="kcard p-5 mb-4"><p class="text-sm mb-3">This approved activity is ready for RFQ preparation.</p><a href="{{ route('rfq.create',['rfq_id'=>$rfq->id]) }}" class="btn-primary">Complete RFQ preparation</a></div>@endcan
 @endif

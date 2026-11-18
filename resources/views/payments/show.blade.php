@@ -3,6 +3,7 @@
 @section('page-title', 'Payment Details')
 
 @section('content')
+@include('partials.record-approval', ['relatedApproval'=>true, 'approvalRecord'=>$payment->paymentAuthorisation ?? $payment->purchaseOrder ?? $payment->activityForm, 'approvalLabel'=>'Linked approval record · payment scheduling does not itself approve a payment'])
 <div class="max-w-2xl space-y-5">
     @php
         $hasScheduleRows = ! $payment->parent_payment_id && $payment->schedules->isNotEmpty();

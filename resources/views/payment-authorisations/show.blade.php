@@ -4,6 +4,7 @@
 @section('page-title', 'Payment Authorisation')
 
 @section('content')
+@include('partials.record-approval', ['approvalRecord'=>$paymentAuthorisation, 'approvalLabel'=>'Payment Authorisation approval'])
 @php($authorisation = $paymentAuthorisation)
 <div class="max-w-5xl space-y-5">
     @if ($errors->any())

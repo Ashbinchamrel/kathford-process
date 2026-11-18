@@ -3,6 +3,7 @@
 @section('page-title', 'Purchase Order')
 
 @section('content')
+@include('partials.record-approval', ['approvalRecord'=>$purchaseOrder, 'approvalLabel'=>'Purchase Order approval'])
 @php($po = $purchaseOrder)
 <div class="max-w-4xl space-y-5">
     {{-- Header Banner --}}

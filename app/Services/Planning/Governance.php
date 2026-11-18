@@ -59,7 +59,7 @@ class Governance
 
     public static function parentType(string $type): ?string
     {
-        return ['cmt_goals' => 'strategy', 'goals' => 'cmt_goals', 'plan' => 'goals', 'budget' => 'plan'][$type] ?? null;
+        return ['cmt_goals' => 'strategy', 'goals' => 'strategy', 'plan' => 'goals', 'budget' => 'plan'][$type] ?? null;
     }
 
     public static function validate(Document $d): void
@@ -73,17 +73,17 @@ class Governance
             return;
         }
         $parent = $d->parent;
-        if (! $parent || $parent->type !== self::parentType($d->type) || ! in_array($parent->status, $d->previous_id ? ['approved', 'superseded'] : ['approved'])) {
+        if (! $parent || ($parent->type !== self::parentType($d->type) && ! ($d->type === 'goals' && $parent->type === 'cmt_goals')) || ! in_array($parent->status, $d->previous_id ? ['approved', 'superseded'] : ['approved'])) {
             self::fail('Link to the approved '.(self::parentType($d->type) === 'strategy' ? 'Strategic Plan' : 'CMT Goals').' first.');
         }
         if (! $d->period_id) {
             self::fail('Choose the semester for these goals.');
         }
         $period = $d->period;
-        if ($d->type === 'goals' && $parent->period_id !== $d->period_id) {
+        if ($d->type === 'goals' && $parent->type === 'cmt_goals' && $parent->period_id !== $d->period_id) {
             self::fail('Department Goals must use the same semester as the linked CMT Goals.');
         }
-        if ($d->type === 'cmt_goals' && $parent->strategy_data) {
+        if ($parent->type === 'strategy' && $parent->strategy_data) {
             $semesters = $parent->strategy_data['semesters'] ?? [];
             if (! collect($semesters)->contains(fn ($s) => $s['starts_on'] <= $period->starts_on && $s['ends_on'] >= $period->ends_on)) {
                 self::fail('The goal semester must fall within a semester of the approved strategy.');

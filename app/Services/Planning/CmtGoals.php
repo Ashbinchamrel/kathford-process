@@ -12,6 +12,23 @@ use Illuminate\Validation\ValidationException;
 
 class CmtGoals
 {
+    public static function approvedContext($strategyIds): array
+    {
+        return Document::where('type', 'cmt_goals')->where('status', 'approved')
+            ->whereIn('parent_id', $strategyIds)->with(['items', 'period'])->orderBy('title')->get()
+            ->flatMap(function ($document) {
+                return collect(self::groups($document->items))->map(fn ($group) => [
+                    'strategy_id' => $document->parent_id,
+                    'source_id' => $group['source_id'],
+                    'starts_on' => $document->period?->starts_on,
+                    'ends_on' => $document->period?->ends_on,
+                    'document_title' => $document->title,
+                    'title' => $group['title'],
+                    'results' => $group['results'],
+                ]);
+            })->values()->all();
+    }
+
     public static function groups($items): array
     {
         return $items->groupBy(fn ($i) => $i->details['goal_key'] ?? $i->id)->map(function ($rows) {
@@ -33,17 +50,46 @@ class CmtGoals
         })->values()->all();
     }
 
+    public static function sourceData(Document $parent): array
+    {
+        if ($parent->type === 'strategy') {
+            $semesters = $parent->strategy_data['semesters'] ?? [];
+            $rows = $parent->items->map(fn ($i) => ['id' => $i->id, 'title' => $i->title, 'strategy' => $i->details['strategy'] ?? []]);
+        } else {
+            $p = $parent->period;
+            $semesters = $p ? [['label' => $p->name, 'starts_on' => $p->starts_on, 'ends_on' => $p->ends_on]] : [];
+            $strategyRows = $parent->parent?->items->keyBy('id') ?? collect();
+            $rows = $parent->items->map(function ($i) use ($strategyRows) {
+                $strategy = $strategyRows->get($i->source_id)?->details['strategy'] ?? [];
+
+                return ['id' => $i->id, 'title' => $i->title, 'strategy' => [
+                    'priority' => $strategy['priority'] ?? 'Other',
+                    'goal' => ($i->details['objective'] ?? $i->title).' · '.$i->title,
+                    'targets' => [($i->target ?? 'Not set').' '.$i->metric],
+                ]];
+            });
+        }
+
+        return ['id' => $parent->id, 'semesters' => array_map(fn ($s) => $s + ['bs' => Dates::bs($s['starts_on']).' – '.Dates::bs($s['ends_on'])], $semesters), 'rows' => $rows->values()];
+    }
+
     public static function prepare(Request $r): void
     {
-        $chain = Governance::defaultChain('cmt_goals');
+        $chain = Governance::defaultChain($r->input('type'));
         if (! $chain || ! ApprovalChain::active()->whereKey($chain)->exists()) {
-            throw ValidationException::withMessages(['approval_chain_id' => 'Set the CMT Goals approval chain in Planning Setup → Form settings first.']);
+            throw ValidationException::withMessages(['approval_chain_id' => 'Set the '.Access::TYPES[$r->input('type')].' approval chain in Planning Setup → Form settings first.']);
         }
         $r->merge(['approval_chain_id' => $chain]);
         if ($r->has('semester_index')) {
             $r->validate(['parent_id' => 'required|exists:planning_documents,id', 'semester_index' => 'required|integer|min:0|max:11']);
             $parent = Document::findOrFail($r->parent_id);
             Access::document($parent, $r->user());
+            if ($r->input('type') === 'goals' && $parent->type === 'cmt_goals') {
+                abort_unless($parent->type === 'cmt_goals' && $parent->period && (int) $r->semester_index === 0, 422, 'Choose the semester of the linked CMT Goals.');
+                $r->merge(['period_id' => $parent->period_id]);
+
+                return;
+            }
             $semester = $parent->strategy_data['semesters'][(int) $r->semester_index] ?? null;
             abort_unless($parent->type === 'strategy' && $semester, 422, 'Choose a semester from the selected Strategic Plan.');
             $period = Period::firstOrCreate([

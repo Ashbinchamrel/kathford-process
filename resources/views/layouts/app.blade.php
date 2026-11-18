@@ -118,6 +118,8 @@
     </style>
     @stack('styles')
 <link rel="stylesheet" href="{{ asset('css/portal.css') }}">
+<link rel="stylesheet" href="{{ asset('record-dialog.css') }}">
+<script src="{{ asset('js/record-dialog.js') }}" defer></script>
 </head>
 <body class="h-full" style="background:#F4F5F8;" x-data="{ sidebarOpen: false, userMenu: false }">
 @php

@@ -27,13 +27,6 @@ class StrategyController extends Controller
             $rows = [['priority' => '', 'goal' => '', 'strategy' => '', 'targets' => array_fill(0, count($matrix['semesters']), '')]];
         }
 
-        if (! $document->exists && $r->query('template') === 'reference') {
-            $reference = json_decode(file_get_contents(resource_path('data/kathford-strategy-reference.json')), true, 512, JSON_THROW_ON_ERROR);
-            $matrix = $reference['matrix'];
-            $rows = $reference['rows'];
-            $document->title = $reference['title'];
-        }
-
         return view('planning.strategy-edit', compact('document', 'matrix', 'rows') + ['chains' => ApprovalChain::active()->get()]);
     }
 
